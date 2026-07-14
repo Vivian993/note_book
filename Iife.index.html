@@ -26,8 +26,6 @@
   --amber: #D4A44C;
   --amber-light: #FDF5E4;
   --lavender: #9A8AA6;
-  --blue-soft: #6A8EAE;
-  --blue-light: #EBF1F5;
 }
 
 body {
@@ -57,33 +55,26 @@ body {
 .header-gregorian { font-size: 15px; font-weight: 700; color: var(--ink); }
 .header-lunar { font-size: 13px; color: var(--amber); font-weight: 500; }
 
-/* 🐻 今日小管家卡片樣式 */
-.today-assistant-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 12px rgba(139,125,114,0.06);
+.alarm-banner {
+  display: none; background: var(--red); color: white; padding: 12px;
+  border-radius: 14px; margin-bottom: 12px; text-align: center;
+  font-weight: bold; font-size: 18px; animation: alarmBlink 1s infinite;
 }
-.today-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 12px;
-  border-bottom: 1px dashed var(--border);
-  padding-bottom: 8px;
+.alarm-banner button {
+  background: white; color: var(--red); border: none; padding: 4px 14px;
+  border-radius: 8px; font-weight: bold; margin-left: 12px; cursor: pointer; font-size: 15px;
 }
-.today-row {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--ink);
-  margin-bottom: 6px;
-  line-height: 1.4;
+@keyframes alarmBlink { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; background: #962d22; } }
+
+.timer-container {
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; margin-bottom: 12px;
 }
-.today-row:last-child {
-  margin-bottom: 0;
-}
+.timer-upper { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.timer-info { font-weight: 700; font-size: 16px; }
+.timer-display { font-family: monospace; font-size: 22px; font-weight: 700; color: var(--brick); }
+.timer-btn { background: var(--brick); color: #fff; border: none; padding: 6px 14px; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: 700; }
+.timer-presets { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.preset-btn { background: var(--border2); border: none; padding: 5px 11px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--ink); white-space: nowrap; font-weight: 500; }
 
 .tabs { display: flex; background: var(--border2); padding: 4px; border-radius: 14px; margin-bottom: 12px; }
 .tab-btn { flex: 1; border: none; background: transparent; padding: 12px 0; font-size: 18px; font-weight: 500; color: var(--ink-soft); cursor: pointer; border-radius: 10px; text-align: center; }
@@ -121,21 +112,22 @@ body {
 .tag-safe { background: var(--sage-light); color: var(--sage); }
 .cat-icon { font-size: 22px; flex-shrink: 0; width: 28px; text-align: center; }
 
-.bottom-summary-panel { background: #FFFDFC; border: 2px solid var(--amber); border-radius: 20px; padding: 14px; margin-top: 16px; box-shadow: 0 -4px 16px rgba(212,164,76,0.08); }
-.summary-header { font-size: 17px; font-weight: 700; color: var(--amber); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px; }
-.summary-scroll-hint { font-size: 12px; color: var(--red); font-weight: bold; display: none; animation: blink 1.5s infinite; }
+.bottom-summary-panel { background: #FFFDFC; border: 2px solid var(--amber); border-radius: 20px; padding: 14px 14px 14px 14px; margin-top: 16px; box-shadow: 0 -4px 16px rgba(212,164,76,0.08); margin-bottom: 16px; }
+.summary-header { font-size: 16px; font-weight: 700; color: var(--amber); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 8px; }
+.summary-scroll-hint { font-size: 12px; color: var(--red); font-weight: bold; animation: blink 1.5s infinite; }
 @keyframes blink { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
 .summary-list { display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto; }
 .summary-list::-webkit-scrollbar { width: 6px; }
 .summary-list::-webkit-scrollbar-thumb { background: var(--amber); border-radius: 4px; }
-.summary-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-.sum-left { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+.summary-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 15px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; cursor: pointer; }
+.sum-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .sum-name { font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sum-rmk { font-size: 12px; color: var(--ink-soft); background: var(--border2); padding: 1px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+.sum-rmk { font-size: 12px; color: var(--ink-soft); background: var(--border2); padding: 1px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
 
-.fab-small { width: 40px; height: 40px; border-radius: 12px; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-.fab-add { background: var(--sage); font-size: 24px; }
-.fab-setting { background: var(--amber); font-size: 20px; }
+.fab-group { display: none; }  /* moved to summary header */
+.fab { width: 40px; height: 40px; border-radius: 50%; border: none; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+.fab-add { background: var(--sage); }
+.fab-setting { background: var(--amber); font-size: 22px; }
 
 .backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(212,164,76,0.28); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 100; backdrop-filter: blur(2px); }
 .backdrop.show { opacity: 1; pointer-events: auto; }
@@ -182,11 +174,8 @@ body {
 .toast.show { opacity: 1; }
 
 .lunar-red { color: var(--red) !important; font-weight: 700; }
-.lunar-note { display: none; font-size: 13px; font-weight: 700; text-align: center; padding: 8px 10px; border-radius: 12px; margin-bottom: 10px; border: 1px solid transparent; }
+.lunar-note { display: none; background: var(--amber-light); border: 1px solid var(--amber); color: var(--amber); font-size: 13px; font-weight: 700; text-align: center; padding: 6px 10px; border-radius: 12px; margin-bottom: 10px; }
 .lunar-note.show { display: block; }
-.lunar-note.zuoya { background: var(--amber-light); border-color: var(--amber); color: var(--amber); }
-.lunar-note.holiday { background: var(--brick-light); border-color: var(--brick); color: var(--brick); }
-.lunar-note.quote { background: var(--blue-light); border-color: var(--blue-soft); color: var(--blue-soft); font-weight: 500;}
 
 .confirm-modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(212,164,76,0.32); z-index:300; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:0.2s; }
 .confirm-modal-backdrop.show { opacity:1; pointer-events:auto; }
@@ -203,22 +192,33 @@ body {
 </head>
 <body>
 
+<div id="alarmBanner" class="alarm-banner">
+  🚨 時間到囉！！！點擊右側按鈕關閉鬧鈴
+  <button onclick="stopAlarmSound()">🔕 關閉鬧鈴</button>
+</div>
+
 <div id="lunarNote" class="lunar-note"></div>
 
 <div class="header-zone">
   <div class="header-title" onclick="playClickSound()">🐻 日常小管家</div>
   <div class="header-date-box" onclick="playClickSound(); openSheet('calSheet')">
-    <div id="headerGregorian" class="header-gregorian">--</div>
-    <div class="header-lunar">農曆 <span id="headerLunar">--</span> 📅</div>
+    <div id="headerGregorian" class="header-gregorian">2026年07月01日</div>
+    <div class="header-lunar">農曆 <span id="headerLunar">五月十七</span> 📅</div>
   </div>
 </div>
 
-<div id="todayAssistantCard" class="today-assistant-card">
-  <div class="today-title">🐻 今日小管家</div>
-  <div class="today-row" id="todayBill">🎉 今天沒有待繳帳單</div>
-  <div class="today-row" id="todayTask">📝 今天有 0 件待辦事項</div>
-  <div class="today-row" id="todayZuoya" style="display:none;"></div>
-  <div class="today-row" id="todayQuote">🌿 今天也要照顧好自己</div>
+<div class="timer-container">
+  <div class="timer-upper">
+    <div class="timer-info">⏱️ 倒數計時：<span id="timerClock" class="timer-display">25:00</span></div>
+    <button id="timerBtn" class="timer-btn" onclick="playClickSound(); toggleTimer()">開始</button>
+  </div>
+  <div class="timer-presets">
+    <button class="preset-btn" onclick="playClickSound(); setTimerMinutes(10)">10分鐘</button>
+    <button class="preset-btn" onclick="playClickSound(); setTimerMinutes(20)">20分鐘</button>
+    <button class="preset-btn" onclick="playClickSound(); setTimerMinutes(30)">30分鐘</button>
+    <button class="preset-btn" onclick="playClickSound(); setTimerMinutes(45)">45分鐘</button>
+    <button class="preset-btn" onclick="playClickSound(); setTimerMinutes(60)">60分鐘</button>
+  </div>
 </div>
 
 <div class="tabs">
@@ -248,16 +248,21 @@ body {
 
 <div class="bottom-summary-panel">
   <div class="summary-header">
-    <div style="display:flex; align-items:center; gap: 4px;">
-      <span>🔔 待處理事項 (依日期)</span>
-      <span id="summaryHint" class="summary-scroll-hint">⬇️</span>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span>🔔 待處理事項</span>
+      <span id="summaryHint" class="summary-scroll-hint">⬇️ 下滑查看更多</span>
     </div>
-    <div style="display:flex; gap:10px;">
-      <button class="fab-small fab-setting" onclick="playClickSound(); openSheet('settingSheet')">⚙️</button>
-      <button class="fab-small fab-add" onclick="playClickSound(); openAddSheet()">＋</button>
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+      <button style="background:var(--amber);color:white;border:none;padding:6px 10px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;" onclick="playClickSound(); openSheet('settingSheet')">⚙️ 後台</button>
+      <button style="background:var(--sage);color:white;border:none;padding:6px 12px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;" onclick="playClickSound(); openAddSheet()">➕ 新增</button>
     </div>
   </div>
   <div id="summaryList" class="summary-list" onscroll="checkSummaryScroll()"></div>
+</div>
+
+<div class="fab-group">
+  <button class="fab fab-setting" onclick="playClickSound(); openSheet('settingSheet')">⚙️</button>
+  <button class="fab fab-add" onclick="playClickSound(); openAddSheet()">＋</button>
 </div>
 
 <div id="backdrop" class="backdrop" onclick="closeAllSheets()"></div>
@@ -323,10 +328,6 @@ body {
   </div>
   <div class="sheet-body">
     <input type="hidden" id="formMemoId">
-    <div class="form-group">
-      <label class="form-label">備忘類型</label>
-      <select id="formMemoCat" class="form-ctrl"></select>
-    </div>
     <div class="form-group">
       <label class="form-label">事項名稱</label>
       <input type="text" id="formMemoTitle" class="form-ctrl" placeholder="輸入標題">
@@ -412,32 +413,6 @@ body {
     <button class="sheet-close" onclick="closeAllSheets()">×</button>
   </div>
   <div class="sheet-body">
-    <div style="background:var(--blue-light); border:1px dashed var(--blue-soft); padding:10px; border-radius:12px; margin-bottom:16px;">
-      <span style="font-weight:bold; color:var(--blue-soft); font-size:16px;">👨‍👩‍👧 家庭同步（和先生共用）</span>
-      <p style="font-size:12px; color:var(--ink-soft); margin:6px 0;">先貼上你的 Apps Script 網址，再產生代碼給先生輸入，兩人就會自動同步。朋友要用請各自申請 Apps Script 網址，資料完全獨立。</p>
-      <div class="form-group">
-        <label class="form-label" style="font-size:13px;">Apps Script 網址（結尾 /exec）</label>
-        <input id="syncUrlInput" class="form-ctrl" style="font-size:12px;" placeholder="https://script.google.com/macros/s/.../exec">
-        <button class="btn-block" style="background:var(--lavender); padding:8px; font-size:14px; margin-top:6px;" onclick="saveSyncUrl()">💾 儲存網址</button>
-      </div>
-      <div id="syncStatusBox" style="font-size:13px; font-weight:bold; margin-bottom:8px;"></div>
-      <div class="form-group">
-        <label class="form-label" style="font-size:13px;">目前同步代碼</label>
-        <div style="display:flex; gap:6px;">
-          <input id="syncCodeDisplay" class="form-ctrl" readonly style="font-family:monospace; font-weight:bold; text-align:center; letter-spacing:2px;" placeholder="尚未設定">
-          <button class="fab-small" style="background:var(--blue-soft); width:44px; flex-shrink:0;" onclick="copySyncCode()">📋</button>
-        </div>
-      </div>
-      <button class="btn-block" style="background:var(--blue-soft); padding:10px; font-size:15px;" onclick="generateSyncCode()">🔑 產生新代碼（建立家庭同步）</button>
-      <div class="form-group" style="margin-top:10px;">
-        <label class="form-label" style="font-size:13px;">輸入先生給的代碼加入同步</label>
-        <input id="syncCodeInput" class="form-ctrl" style="font-family:monospace; text-transform:uppercase;" placeholder="例如 AB12CD">
-        <button class="btn-block" style="background:var(--sage); padding:10px; font-size:15px; margin-top:6px;" onclick="joinSyncCode()">🔗 加入此代碼同步</button>
-      </div>
-      <button class="btn-del" style="margin-top:8px; padding:8px; font-size:13px;" onclick="stopSync()">🚫 停止同步（改回只存本機）</button>
-    </div>
-
-
     <div style="background:#FFFBF7; border:1px dashed var(--amber); padding:10px; border-radius:12px; margin-bottom:16px;">
       <span style="font-weight:bold; color:var(--amber); font-size:16px;">🔧 自訂帳單下拉細項 (以逗號隔開)</span>
       <div class="form-group" style="margin-top:8px;">
@@ -451,10 +426,6 @@ body {
       <div class="form-group">
         <label class="form-label" style="font-size:13px;">📬 其他帳單細項組</label>
         <textarea id="editCatOther" class="form-ctrl" rows="2" style="font-size:13px;"></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label" style="font-size:13px;">📌 備忘錄類型組</label>
-        <textarea id="editCatMemo" class="form-ctrl" rows="2" style="font-size:13px;"></textarea>
       </div>
       <button class="btn-block" style="background:var(--amber); font-size:15px; padding:10px;" onclick="saveCustomCategories()">儲存更新分類細項組</button>
     </div>
@@ -496,21 +467,9 @@ let state = { bills: [], memos: [], trash: [], filterType: 'all', categories: {}
 const defaultCategories = {
   living: ["水費", "電費", "瓦斯費", "手機費", "網路費", "社區管理費", "信用卡帳單", "保險費", "勞健保", "學費", "停車費、月租費", "房貸", "車貸", "信貸", "其它款項"],
   tax: ["地價稅", "牌照稅", "燃料費", "房屋稅", "綜合所得稅", "其他政府稅費"],
-  other: ["報名費", "罰鍰／罰單", "捐款", "其他費用"],
-  memo: ["生日", "看診／回診", "聚會", "拜拜", "旅遊", "重要提醒", "其他"]
+  other: ["報名費", "罰鍰／罰單", "捐款", "其他費用"]
 };
 const catIcons = { living: '🏡', tax: '💰', other: '📬' };
-
-/* 備忘錄類型圖示對照 (找不到則用 📌) */
-const memoIconRules = [
-  [/生日/, '🎂'], [/看診|回診|醫生|醫院/, '🏥'], [/聚會/, '🎉'],
-  [/拜拜|土地公|作牙/, '🙏'], [/旅遊|出遊/, '✈️'], [/提醒/, '🔔']
-];
-function getMemoIcon(m) {
-  const t = (m.cat || '') + (m.title || '');
-  for (const [re, icon] of memoIconRules) { if (re.test(t)) return icon; }
-  return '📌';
-}
 
 /* 細項關鍵字圖示對照 (找不到則用 💰) */
 const itemIconRules = [
@@ -526,46 +485,7 @@ function getItemIcon(b) {
   return catIcons[b.cat] || '💰';
 }
 
-/* 100 則溫暖日常短語 */
-const warmQuotes = [
-  "今天也要照顧好自己喔。", "累了就休息一下吧，沒關係的。", "記得多喝杯溫水。", "慢慢來，一切都會順利的。",
-  "給自己一個大大的微笑吧。", "天氣不錯的話，去走走吹吹風。", "辛苦啦！今天的你也做得很棒。", "伸個懶腰，放鬆緊繃的肩膀。",
-  "煩心事就留給明天吧，今晚先好好睡。", "照顧好心情，比什麼都重要。", "允許自己有想耍廢的時候。", "吃點好吃的，犒賞一下自己。",
-  "深呼吸，把壓力吐出去。", "買杯喜歡的飲料，享受一下小確幸。", "先把眼前的小事做好就行了。", "停下腳步看看天空吧。",
-  "記得對自己溫柔一點。", "睡個好覺治百病。", "每一天都是新的開始。", "聽首喜歡的歌，轉換一下心情。",
-  "不要太逼自己，順其自然就好。", "你的努力，時間都看在眼裡。", "把房間稍微整理一下，心情也會清爽喔。", "隨便發個呆也是一種放鬆。",
-  "去抱抱毛小孩或喜歡的娃娃吧。", "不完美也很可愛。", "慢慢走，沿途的風景也很美。", "給家人或朋友發個訊息聊聊天。",
-  "洗個熱水澡，把疲憊洗掉。", "少看點螢幕，讓眼睛休息一下。", "相信自己，你已經做得很好了。", "肚子餓了就去吃點東西吧。",
-  "偶爾放空什麼都不想也很棒。", "找到屬於自己的步調就好。", "給自己一點鼓勵，你很厲害喔。", "不要在深夜做決定，先睡覺吧。",
-  "今天發生了什麼好玩的事嗎？", "留一點時間只給自己。", "別忘了照顧好自己的胃。", "把討厭的事情丟進垃圾桶。",
-  "換個角度想，也許會豁然開朗。", "穿上喜歡的衣服，心情也會變好。", "去曬曬太陽，補充一點能量。", "今天也要好好愛自己。",
-  "就算只是平凡的一天，也很珍貴。", "一切都會慢慢變好的。", "給自己一個擁抱吧。", "不要為了別人的眼光委屈自己。",
-  "喝碗熱湯暖暖身子。", "把腳步放慢一點也沒關係。", "開心最重要，其他都是其次。", "去吃那家一直想吃的店吧。",
-  "想哭的時候就好好哭一場。", "今天的你也閃閃發光喔。", "先愛自己，才能愛生活。", "做點讓自己開心的事吧。",
-  "別忘了每天誇獎自己一句。", "你的存在本身就是一件美好的事。", "睡前拉拉筋，會睡得更好喔。", "不要害怕犯錯，那都是經驗。",
-  "買束小花放在桌上吧。", "去附近的公園散散步。", "泡杯熱茶，享受一個人的時間。", "你的感受是最重要的。",
-  "勇敢說不，保護自己的能量。", "今天早點下班/休息吧。", "看點好笑的影片放鬆一下。", "不用急著趕路，休息一下再出發。",
-  "把煩惱寫下來，然後揉掉丟掉。", "保持一顆平常心。", "感受微風吹過的感覺。", "聽聽雨聲也很療癒喔。",
-  "你值得擁有所有美好的事物。", "今天也要平安喜樂。", "整理一下桌面，迎接好心情。", "去便利商店買個小零食吧。",
-  "你的笑容很有感染力喔。", "別把什麼事都往肩上扛。", "偶爾任性一下也沒關係。", "今天的雲朵長得可愛嗎？",
-  "去找一件能讓自己笑出來的小事。", "允許一切如其所是。", "吃飽睡好，人生沒煩惱。", "把專注力拉回自己身上。",
-  "去做那件你想了很久的小事。", "你已經夠努力了，休息一下吧。", "享受一頓不被打擾的晚餐。", "點個香氛蠟燭，讓房間充滿香氣。",
-  "今天也要溫柔地對待世界和自己。", "把複雜的事情簡單化。", "不開心的時候，就去睡覺。", "你的人生由你做主。",
-  "去看看海，或者看看樹。", "給疲憊的心放個假。", "相信直覺，跟著心走。", "你比想像中堅強多了。",
-  "記得跟自己說聲謝謝。", "每一口呼吸都是生命的禮物。", "今天有好好吃飯嗎？", "就算什麼都沒做，這一天也很棒。"
-];
-
-const dailyQuotes = [
-  "每一個不曾起舞的日子，都是對生命的辜負。",
-  "生活是一面鏡子，你對它笑，它就對你笑。",
-  "不要等待機會，而要創造機會。",
-  "每天進步一點點，就是成功的開始。",
-  "相信自己，你能作繭自縛，就能破繭成蝶。",
-  "心若向陽，無畏悲傷。",
-  "最美好的事，是看到某人的微笑。"
-];
-
-/* ════ 自訂確認彈窗 ════ */
+/* ════ 自訂確認彈窗 (取代原生 confirm，避免在內嵌瀏覽器中失效) ════ */
 let _confirmCallback = null;
 function showConfirm(msg, cb) {
   _confirmCallback = cb;
@@ -601,27 +521,31 @@ function notifyUser(title, body) {
   } catch(e) {}
   showToast(title + (body ? '：' + body : ''));
 }
-
-/* ════ 作牙提醒改為在「今日小管家」卡片顯示，前2天開始提示 ════ */
-function getZuoyaReminder() {
+/* ════ 「拜土地公」(農曆初二／十六) 提前 7 天自動提醒，只處理最近一次，不會佔滿整月 ════ */
+function autoInsertZuoyaMemos() {
   const today = new Date(); today.setHours(0,0,0,0);
-  for (let i = 0; i <= 2; i++) {
+  for (let i = 0; i <= 16; i++) {
     const d = new Date(today); d.setDate(d.getDate() + i);
     const y = d.getFullYear(), m = d.getMonth() + 1, day = d.getDate();
     const info = getLunarInfo(y, m, day);
     if (info.dayName === '初二' || info.dayName === '十六') {
-      if (i === 0) return `🙏 今天是作牙日（${info.dayName}），記得準備拜拜東西`;
-      return `🙏 ${m}月${day}日是作牙日（${info.dayName}），還有 ${i} 天，記得先準備`;
+      if (i <= 7) {
+        const eventDateStr = `${y}-${String(m).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const autoId = 'auto_zuoya_' + eventDateStr;
+        const alreadyExists = state.memos.some(mo => mo.id === autoId) || state.trash.some(t => t.type==='memo' && t.data && t.data.id === autoId);
+        if (!alreadyExists) {
+          const ty = today.getFullYear(), tm = today.getMonth()+1, td = today.getDate();
+          state.memos.push({
+            id: autoId,
+            title: `拜土地公`,
+            date: `${ty}-${String(tm).padStart(2,'0')}-${String(td).padStart(2,'0')}`,
+            content: i === 0 ? `今日農曆${info.monthName}${info.dayName}，記得拜土地公。` : `還有 ${i} 天（國曆${m}/${day}）農曆${info.monthName}${info.dayName}，記得準備拜土地公。`
+          });
+        }
+      }
+      break; /* 只處理最近一次發生的日子，避免整月都被排滿 */
     }
   }
-  return null;
-}
-
-/* 清除舊版自動寫入的「拜土地公」備忘錄（改用今日小管家卡片提醒，不再需要） */
-function removeLegacyZuoyaMemos() {
-  const before = state.memos.length;
-  state.memos = state.memos.filter(m => !String(m.id).startsWith('auto_zuoya_'));
-  return state.memos.length !== before;
 }
 
 function checkSoonBillsAndNotify() {
@@ -632,6 +556,9 @@ function checkSoonBillsAndNotify() {
 }
 
 let audioCtx = null;
+let alarmInterval = null;
+let timerInterval = null;
+let timerSeconds = 1500;
 
 const chNums = ["","初一","初二","初三","初四","初五","初六","初七","初八","初九","初十","十一","十二","十三","十四","十五","十六","十七","十八","十九","二十","廿一","廿二","廿三","廿四","廿五","廿六","廿七","廿八","廿九","三十"];
 const lunarStarts = [
@@ -644,7 +571,7 @@ const lunarStarts = [
   { date: '2026-05-16', name: '四月' },
   { date: '2026-06-15', name: '五月' },
   { date: '2026-07-14', name: '六月' },
-  { date: '2026-08-12', name: '七月' },
+  { date: '2026-08-13', name: '七月' },
   { date: '2026-09-11', name: '八月' },
   { date: '2026-10-10', name: '九月' },
   { date: '2026-11-09', name: '十月' },
@@ -664,77 +591,92 @@ const lunarStarts = [
   { date: '2027-12-29', name: '十二月' }
 ];
 
-/* 改用安全無時差解析方式 */
+function parseDateLocal(str) {
+  const [y, m, d] = str.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 function getLunarInfo(year, month, day) {
-  const target = new Date(year, month - 1, day, 0, 0, 0);
+  const target = new Date(year, month - 1, day);
   let matched = lunarStarts[0];
   for (let i = 0; i < lunarStarts.length; i++) {
-    const [y, m, d] = lunarStarts[i].date.split('-');
-    const startDate = new Date(y, m - 1, d, 0, 0, 0);
+    const startDate = parseDateLocal(lunarStarts[i].date);
     if (target >= startDate) {
       matched = lunarStarts[i];
     } else {
       break;
     }
   }
-  const [sy, sm, sd] = matched.date.split('-');
-  const startDay = new Date(sy, sm - 1, sd, 0, 0, 0);
+  const startDay = parseDateLocal(matched.date);
   const diffDays = Math.round((target - startDay) / (1000 * 60 * 60 * 24));
-  return { monthName: matched.name, dayName: chNums[diffDays + 1] || "初一" };
+  return { monthName: matched.name, dayName: chNums[diffDays + 1] || '初一' };
 }
+
+const TW_HOLIDAYS = {
+  '01-01': '元旦',
+  '02-28': '二二八和平紀念日',
+  '04-04': '兒童節',
+  '04-05': '清明節',
+  '05-01': '勞動節',
+  '06-18': '端午節',
+  '07-04': '父親節(非假日)',
+  '09-28': '教師節',
+  '10-10': '國慶日',
+  '10-31': '萬聖節前夕',
+  '12-25': '聖誕節',
+};
+const DAILY_QUOTES = [
+  { text: '每一天都是嶄新的開始，把握當下。', color: '#6E9E82' },
+  { text: '生活需要儀式感，哪怕只是一杯熱茶。', color: '#9A8AA6' },
+  { text: '願你今天的帳單都能順利解決 🌿', color: '#6E9E82' },
+  { text: '記得喝水，照顧好自己。', color: '#D4A44C' },
+  { text: '細心安排，生活就會更從容。', color: '#C4756B' },
+  { text: '微小的進步，也是進步。', color: '#9A8AA6' },
+  { text: '把雜事整理好，心情也會跟著整齊。', color: '#6E9E82' },
+  { text: '困難只是還沒解決的問題。', color: '#D4A44C' },
+  { text: '今天也要好好吃飯喔 🍱', color: '#C4756B' },
+  { text: '感謝自己每一天的努力。', color: '#9A8AA6' },
+  { text: '好好睡覺，是對明天最好的準備。', color: '#6E9E82' },
+  { text: '人生如帳單，偶爾要對自己寬容一點。', color: '#D4A44C' },
+  { text: '把當下做好，就是在創造未來。', color: '#C4756B' },
+  { text: '慢慢來，比較快。', color: '#9A8AA6' },
+  { text: '今天是美好的一天，請認真過完它 ✨', color: '#6E9E82' },
+];
 
 function updateHeaderDates() {
   const now = new Date();
   const y = now.getFullYear(); const m = now.getMonth() + 1; const d = now.getDate();
-  const weekdays = ["(日)", "(一)", "(二)", "(三)", "(四)", "(五)", "(六)"];
-  
-  document.getElementById('headerGregorian').textContent = `${y}年${String(m).padStart(2,'0')}月${String(d).padStart(2,'0')}日 ${weekdays[now.getDay()]}`;
-  
+  const weekNames = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+  document.getElementById('headerGregorian').textContent = `${y}年${String(m).padStart(2,'0')}月${String(d).padStart(2,'0')}日 ${weekNames[now.getDay()]}`;
   const info = getLunarInfo(y, m, d);
   const lunarEl = document.getElementById('headerLunar');
   lunarEl.textContent = `${info.monthName}${info.dayName}`;
   const isSpecialRed = (info.dayName === '初一' || info.dayName === '十五');
-  lunarEl.classList.toggle('lunar-red', isSpecialRed);
+  lunarEl.style.color = isSpecialRed ? 'var(--red)' : '';
+  lunarEl.style.fontWeight = isSpecialRed ? '700' : '';
 
   const noteEl = document.getElementById('lunarNote');
-  const mStr = String(m).padStart(2,'0');
-  const dStr = String(d).padStart(2,'0');
-  
-  const gregorianHolidays = {
-    '01-01': '元旦', '02-28': '和平紀念日', '04-04': '兒童節', '04-05': '清明節', '05-01': '勞動節', '10-10': '國慶日'
-  };
-  const lunarHolidays = {
-    '正月初一': '春節', '正月十五': '元宵節', '五月初五': '端午節', '八月十五': '中秋節', '臘月三十': '除夕'
-  };
-  
-  let holidayName = gregorianHolidays[`${mStr}-${dStr}`] || lunarHolidays[`${info.monthName}${info.dayName}`];
+  const mmdd = `${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 
   if (info.dayName === '初二' || info.dayName === '十六') {
-    noteEl.textContent = `今日為${info.dayName}，民間習俗為「作牙」日`;
-    noteEl.className = 'lunar-note show zuoya';
-  } else if (holidayName) {
-    noteEl.textContent = `🎉 今日是 ${holidayName}！`;
-    noteEl.className = 'lunar-note show holiday';
+    noteEl.style.cssText = '';
+    noteEl.textContent = `今日農曆${info.dayName}，記得拜土地公！`;
+    noteEl.classList.add('show');
+  } else if (TW_HOLIDAYS[mmdd]) {
+    noteEl.style.color = '#C0392B';
+    noteEl.style.borderColor = '#C0392B';
+    noteEl.style.background = '#FDF2F1';
+    noteEl.textContent = `🎌 今日：${TW_HOLIDAYS[mmdd]}`;
+    noteEl.classList.add('show');
   } else {
-    const quote = dailyQuotes[d % dailyQuotes.length];
-    noteEl.textContent = `💡 ${quote}`;
-    noteEl.className = 'lunar-note show quote';
+    const q = DAILY_QUOTES[(y * 100 + m * 10 + d) % DAILY_QUOTES.length];
+    noteEl.style.color = q.color;
+    noteEl.style.borderColor = q.color;
+    noteEl.style.background = '#FDFBF8';
+    noteEl.textContent = `✦ ${q.text}`;
+    noteEl.classList.add('show');
   }
-
-  // 同步更新今日小管家卡片
-  renderTodayAssistant();
 }
-
-/* 自動偵測跨日更新日曆 */
-let currentDayRef = new Date().getDate();
-setInterval(() => {
-  let nowD = new Date().getDate();
-  if(nowD !== currentDayRef) {
-    currentDayRef = nowD;
-    updateHeaderDates();
-    if (document.getElementById('calSheet').classList.contains('open')) renderCalendar();
-  }
-}, 60000);
 
 /* ════ 多層次音效引擎 (4 種音色) ════ */
 function initAudioEngine() {
@@ -774,6 +716,25 @@ function playSuccessSound() {
 /* 低沉木魚聲：刪除 */
 function playDeleteSound() { playTone(180, 'triangle', 0.18, 0.12); }
 
+/* 連續高頻警報聲：鬧鐘歸零 */
+function startAlarmSound() {
+  try {
+    initAudioEngine();
+    if (!audioCtx || alarmInterval) return;
+    document.getElementById('alarmBanner').style.display = 'block';
+    alarmInterval = setInterval(() => {
+      playTone(820, 'square', 0.45, 0.2);
+    }, 600);
+  } catch(e) {}
+}
+
+function stopAlarmSound() {
+  playClickSound();
+  if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
+  document.getElementById('alarmBanner').style.display = 'none';
+  showToast("🔕 鬧鈴已關閉");
+}
+
 let touchStartX = 0; let touchStartY = 0; let activeSwipeNode = null;
 
 function handleTouchStart(e) {
@@ -797,20 +758,6 @@ function handleTouchMove(e) {
 
 function initSubCatOptions() {
   if(!state.categories || !state.categories.living) state.categories = JSON.parse(JSON.stringify(defaultCategories));
-  if(!state.categories.memo) state.categories.memo = JSON.parse(JSON.stringify(defaultCategories.memo));
-}
-
-function populateMemoCatOptions(selected) {
-  const sel = document.getElementById('formMemoCat');
-  sel.innerHTML = '';
-  const placeholder = document.createElement('option');
-  placeholder.value = ''; placeholder.textContent = '-- 請選擇類型 ▼ --';
-  sel.appendChild(placeholder);
-  (state.categories.memo || []).forEach(item => {
-    const opt = document.createElement('option'); opt.value = item; opt.textContent = item;
-    sel.appendChild(opt);
-  });
-  sel.value = selected || '';
 }
 
 function selectMainCat(cat) {
@@ -865,177 +812,22 @@ function loadData() {
 
 function resetToDefault() {
   state = {
-    bills: [],
-    memos: [],
+    bills: [
+      { id: 'b1', name: '電費', cat: 'living', amt: 1450, due: '2026-06-30', payMethod: '信用卡', paid: false, rmk: '夏季電費', img: '', receipt: '' },
+      { id: 'b2', name: '水費', cat: 'living', amt: 290, due: '2026-07-10', payMethod: '超商繳費', paid: false, rmk: '雙月繳', img: '', receipt: '' }
+    ],
+    memos: [
+      { id: 'm1', title: '學校運動會', date: '2026-07-02', content: '記得帶水壺與防蚊液。' }
+    ],
     trash: [], filterType: 'all', categories: JSON.parse(JSON.stringify(defaultCategories))
   };
   saveData();
 }
 
 function saveData() {
-  state.updatedAt = Date.now();
   localStorage.setItem('bear_小管家_pro_data', JSON.stringify(state));
   renderAll();
   document.getElementById('txtBackupCode').value = JSON.stringify(state);
-  if(syncCode) pushSync();
-}
-
-/* ===== 家庭同步（Apps Script + 配對代碼）===== */
-let syncCode = null;
-let syncUrl = '';
-let syncInterval = null;
-
-function loadSyncCode() {
-  syncCode = localStorage.getItem('bear_sync_code') || null;
-  syncUrl = localStorage.getItem('bear_sync_url') || '';
-  const urlInput = document.getElementById('syncUrlInput');
-  if(urlInput) urlInput.value = syncUrl;
-}
-
-function saveSyncUrl() {
-  playClickSound();
-  const input = document.getElementById('syncUrlInput');
-  syncUrl = (input.value || '').trim();
-  localStorage.setItem('bear_sync_url', syncUrl);
-  showToast(syncUrl ? '✓ 網址已儲存' : '已清空網址');
-}
-
-function updateSyncStatusUI(text, color) {
-  const box = document.getElementById('syncStatusBox');
-  const disp = document.getElementById('syncCodeDisplay');
-  if(disp) disp.value = syncCode || '';
-  if(box) {
-    box.textContent = text || (syncCode ? ('✅ 已與代碼 ' + syncCode + ' 同步中') : '⚪ 尚未啟用同步（僅存本機）');
-    box.style.color = color || (syncCode ? 'var(--sage)' : 'var(--ink-soft)');
-  }
-}
-
-function genRandomCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let s = '';
-  for(let i=0; i<6; i++) s += chars[Math.floor(Math.random()*chars.length)];
-  return s;
-}
-
-async function generateSyncCode() {
-  playClickSound();
-  if(!syncUrl) { updateSyncStatusUI('❌ 請先貼上並儲存 Apps Script 網址', 'var(--red)'); return; }
-  const code = genRandomCode();
-  updateSyncStatusUI('⏳ 建立中...', 'var(--amber)');
-  try {
-    state.updatedAt = Date.now();
-    await remoteSet(code, state);
-    syncCode = code;
-    localStorage.setItem('bear_sync_code', code);
-    startSyncPolling();
-    updateSyncStatusUI();
-    playSuccessSound();
-    showToast('✓ 已產生同步代碼：' + code + '，傳給先生輸入即可');
-  } catch(e) {
-    updateSyncStatusUI('❌ 建立失敗：' + (e && e.message ? e.message : String(e)), 'var(--red)');
-  }
-}
-
-async function joinSyncCode() {
-  playClickSound();
-  if(!syncUrl) { updateSyncStatusUI('❌ 請先貼上並儲存 Apps Script 網址', 'var(--red)'); return; }
-  const input = document.getElementById('syncCodeInput');
-  const code = (input.value || '').trim().toUpperCase();
-  if(!code) { showToast('請先輸入代碼'); return; }
-  updateSyncStatusUI('⏳ 連線中...', 'var(--amber)');
-  try {
-    const remote = await remoteGet(code);
-    if(remote) {
-      applyRemoteState(remote);
-      showToast('✓ 已加入同步，資料已更新');
-    } else {
-      state.updatedAt = Date.now();
-      await remoteSet(code, state);
-      showToast('✓ 已用此代碼建立同步');
-    }
-    syncCode = code;
-    localStorage.setItem('bear_sync_code', code);
-    startSyncPolling();
-    updateSyncStatusUI();
-    playSuccessSound();
-    input.value = '';
-  } catch(e) {
-    updateSyncStatusUI('❌ 加入失敗：' + (e && e.message ? e.message : String(e)), 'var(--red)');
-  }
-}
-
-function stopSync() {
-  playClickSound();
-  showConfirm('確定要停止同步嗎？之後資料只會存在這台裝置，不會再跟先生同步。', () => {
-    syncCode = null;
-    localStorage.removeItem('bear_sync_code');
-    if(syncInterval) clearInterval(syncInterval);
-    updateSyncStatusUI('⚪ 已停止同步（僅存本機）', 'var(--ink-soft)');
-    showToast('已停止同步');
-  });
-}
-
-function copySyncCode() {
-  if(!syncCode) { showToast('尚未設定同步代碼'); return; }
-  const el = document.getElementById('syncCodeDisplay');
-  el.select(); el.setSelectionRange(0, 999);
-  try { document.execCommand('copy'); showToast('📋 代碼已複製，傳給先生貼上即可'); }
-  catch(e) { showToast('請手動選取複製代碼'); }
-}
-
-function applyRemoteState(remote) {
-  state = remote;
-  if(!state.trash) state.trash = [];
-  if(!state.filterType) state.filterType = 'all';
-  if(!state.categories) state.categories = JSON.parse(JSON.stringify(defaultCategories));
-  localStorage.setItem('bear_小管家_pro_data', JSON.stringify(state));
-  initSubCatOptions();
-  renderAll();
-  const backupBox = document.getElementById('txtBackupCode');
-  if(backupBox) backupBox.value = JSON.stringify(state);
-}
-
-async function remoteGet(code) {
-  const res = await fetch(syncUrl + '?code=' + encodeURIComponent(code), { method: 'GET' });
-  if(!res.ok) throw new Error('連線失敗 (' + res.status + ')');
-  const text = await res.text();
-  if(!text) return null;
-  try { return JSON.parse(text); } catch(e) { throw new Error('回應格式錯誤'); }
-}
-
-async function remoteSet(code, data) {
-  const body = new URLSearchParams();
-  body.set('code', code);
-  body.set('data', JSON.stringify(data));
-  const res = await fetch(syncUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: body.toString()
-  });
-  if(!res.ok) throw new Error('連線失敗 (' + res.status + ')');
-}
-
-async function pushSync() {
-  if(!syncCode || !syncUrl) return;
-  try { await remoteSet(syncCode, state); }
-  catch(e) { /* 靜默失敗，下次存檔或輪詢會再試 */ }
-}
-
-async function pullSync() {
-  if(!syncCode || !syncUrl) return;
-  try {
-    const remote = await remoteGet(syncCode);
-    if(remote && (remote.updatedAt || 0) > (state.updatedAt || 0)) {
-      applyRemoteState(remote);
-      updateSyncStatusUI('✅ 已同步先生的最新更新');
-    }
-  } catch(e) { /* 靜默失敗 */ }
-}
-
-function startSyncPolling() {
-  if(syncInterval) clearInterval(syncInterval);
-  if(!syncCode) return;
-  syncInterval = setInterval(pullSync, 8000);
 }
 
 function compressAndGetBase64(file, callback) {
@@ -1056,6 +848,66 @@ function compressAndGetBase64(file, callback) {
   };
   reader.readAsDataURL(file);
 }
+
+function setTimerMinutes(m) {
+  if(timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  document.getElementById('timerBtn').textContent = "開始";
+  timerSeconds = m * 60;
+  localStorage.removeItem('bear_timer_end');
+  document.getElementById('timerClock').textContent = formatTime(timerSeconds);
+  showToast(`⏱️ 時間已指定為 ${m} 分鐘`);
+}
+
+function formatTime(s) {
+  const m = Math.floor(s / 60); const sec = s % 60;
+  return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+}
+
+function toggleTimer() {
+  const btn = document.getElementById('timerBtn');
+  if (timerInterval) {
+    clearInterval(timerInterval); timerInterval = null; btn.textContent = "開始";
+    localStorage.removeItem('bear_timer_end');
+  } else {
+    requestNotifyPermission();
+    const endTs = Date.now() + timerSeconds * 1000;
+    localStorage.setItem('bear_timer_end', String(endTs));
+    timerInterval = setInterval(() => {
+      const remain = Math.round((parseInt(localStorage.getItem('bear_timer_end')||'0') - Date.now()) / 1000);
+      timerSeconds = Math.max(0, remain);
+      document.getElementById('timerClock').textContent = formatTime(timerSeconds);
+      if (timerSeconds <= 0) {
+        clearInterval(timerInterval); timerInterval = null; btn.textContent = "開始";
+        localStorage.removeItem('bear_timer_end');
+        startAlarmSound();
+        notifyUser('⏰ 計時器時間到！', '請回到日常小管家查看');
+      }
+    }, 1000);
+    btn.textContent = "暫停";
+  }
+}
+
+/* 回到前景時，依據儲存的結束時間戳校正計時器（避免背景分頁被節流而失準） */
+function resumeTimerIfNeeded() {
+  const endTsRaw = localStorage.getItem('bear_timer_end');
+  if (!endTsRaw) return;
+  const endTs = parseInt(endTsRaw);
+  const remain = Math.round((endTs - Date.now()) / 1000);
+  if (remain <= 0) {
+    timerSeconds = 0;
+    document.getElementById('timerClock').textContent = formatTime(0);
+    document.getElementById('timerBtn').textContent = "開始";
+    localStorage.removeItem('bear_timer_end');
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    startAlarmSound();
+    notifyUser('⏰ 計時器時間到！', '請回到日常小管家查看');
+  } else {
+    timerSeconds = remain;
+    document.getElementById('timerClock').textContent = formatTime(timerSeconds);
+  }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) resumeTimerIfNeeded(); });
+window.addEventListener('focus', resumeTimerIfNeeded);
 
 function daysLeft(dueStr) {
   const today = new Date(); today.setHours(0,0,0,0);
@@ -1086,7 +938,7 @@ function switchTab(tab) {
 function openSheet(id) {
   document.getElementById('backdrop').classList.add('show');
   document.getElementById(id).classList.add('open');
-  if(id === 'settingSheet') { loadCategoriesIntoInputs(); loadSyncCode(); updateSyncStatusUI(); renderTrash(); if(syncCode) pullSync(); }
+  if(id === 'settingSheet') loadCategoriesIntoInputs();
   if(id === 'calSheet') renderCalendar();
 }
 function closeAllSheets() {
@@ -1098,13 +950,17 @@ function closeDetailSheet() {
   if (!document.querySelector('.sheet.open:not(#detSheet)')) document.getElementById('backdrop').classList.remove('show');
 }
 
+function localDateStr() {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
+}
+
 function openAddSheet() {
   if (currentTab === 'memo') {
     document.getElementById('memoSheetTitle').textContent = "新增備忘錄";
     document.getElementById('formMemoId').value = "";
-    populateMemoCatOptions('');
     document.getElementById('formMemoTitle').value = "";
-    document.getElementById('formMemoDate').value = new Date().toISOString().substring(0,10);
+    document.getElementById('formMemoDate').value = localDateStr();
     document.getElementById('formMemoContent').value = "";
     document.getElementById('btnMemoDel').style.display = 'none';
     openSheet('memoSheet');
@@ -1112,7 +968,7 @@ function openAddSheet() {
     document.getElementById('billSheetTitle').textContent = "新增帳單";
     document.getElementById('formBillId').value = "";
     document.getElementById('formBillAmt').value = "";
-    document.getElementById('formBillDue').value = new Date().toISOString().substring(0,10);
+    document.getElementById('formBillDue').value = localDateStr();
     document.getElementById('formBillMethod').value = "未指定";
     document.getElementById('formBillRmk').value = "";
     document.getElementById('formBillImg').value = "";
@@ -1127,48 +983,6 @@ function renderAll() {
   renderLists();
   renderPendingSummary();
   renderTrash();
-  renderTodayAssistant();
-}
-
-function renderTodayAssistant() {
-  const now = new Date();
-  const localYYYYMMDD = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-
-  const unpaid = state.bills.filter(b => !b.paid);
-  let overdue = 0, dueToday = 0, dueSoon = 0;
-  unpaid.forEach(b => {
-    const d = daysLeft(b.due);
-    if (d < 0) overdue++;
-    else if (d === 0) dueToday++;
-    else if (d > 0 && d <= 3) dueSoon++;
-  });
-
-  let billText = "🎉 今天沒有待繳帳單";
-  if (overdue > 0) {
-    billText = `⚠️ 有 ${overdue} 筆已逾期帳單，請盡快處理！`;
-  } else if (dueToday > 0) {
-    billText = `🔔 有 ${dueToday} 筆今日到期帳單！`;
-  } else if (dueSoon > 0) {
-    billText = `💡 有 ${dueSoon} 筆帳單即將到期（3天內）`;
-  }
-
-  const todayMemos = state.memos.filter(m => m.date === localYYYYMMDD);
-  const taskText = todayMemos.length > 0 
-    ? `📝 今天有 ${todayMemos.length} 件待辦事項` 
-    : `📝 今天沒有待辦事項`;
-
-  const start = new Date(now.getFullYear(), 0, 0);
-  const dayOfYear = Math.floor((now - start) / 86400000);
-  const quote = warmQuotes[dayOfYear % warmQuotes.length];
-
-  document.getElementById('todayBill').textContent = billText;
-  document.getElementById('todayTask').textContent = taskText;
-  document.getElementById('todayQuote').textContent = `🌿 ${quote}`;
-
-  const zuoyaEl = document.getElementById('todayZuoya');
-  const zuoyaText = getZuoyaReminder();
-  if (zuoyaText) { zuoyaEl.textContent = zuoyaText; zuoyaEl.style.display = 'block'; }
-  else { zuoyaEl.style.display = 'none'; }
 }
 
 function renderStats() {
@@ -1245,7 +1059,7 @@ function renderLists() {
             <span class="cat-icon">${icon}</span>
             <div class="item-info">
               <div class="item-title" style="text-decoration:line-through; color:var(--ink-soft);">${esc(b.name)}</div>
-              <div class="item-desc">${esc(b.payDate || b.due)} / ${esc(b.payMethod)}</div>
+              <div class="item-desc">${b.due} ／ ${esc(b.payMethod)}</div>
             </div>
           </div>
           <div class="item-right">
@@ -1268,10 +1082,10 @@ function renderLists() {
         <div class="swipe-back-layer" onclick="triggerDirectDelete('${m.id}', 'memo'); event.stopPropagation();">刪除</div>
         <div class="swipe-front-layer" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" onclick="openMemoEdit('${m.id}')">
           <div class="item-left">
-            <span class="cat-icon">${getMemoIcon(m)}</span>
+            <span class="cat-icon">📌</span>
             <div class="item-info">
               <div class="item-title">${esc(m.title)}</div>
-              <div class="item-desc">${m.cat ? esc(m.cat) + ' | ' : ''}${esc(m.content)}</div>
+              <div class="item-desc">${esc(m.content)}</div>
             </div>
           </div>
           <div class="item-right">
@@ -1290,29 +1104,35 @@ function renderPendingSummary() {
     items.push({ id: b.id, type: 'bill', date: b.due, title: b.name, rmk: b.rmk || '未繳費', amtStr: `$${fmtAmt(b.amt)}`, icon: getItemIcon(b) });
   });
   state.memos.forEach(m => {
-    items.push({ id: m.id, type: 'memo', date: m.date, title: m.title, rmk: m.content || m.cat || '重要備忘', amtStr: '備忘', icon: getMemoIcon(m) });
+    items.push({ id: m.id, type: 'memo', date: m.date, title: m.title, rmk: m.content || '重要備忘', amtStr: '備忘', icon: '📌' });
   });
   items.sort((a,b) => new Date(a.date) - new Date(b.date));
 
+  const hintEl = document.getElementById('summaryHint');
   if(items.length === 0) {
     sumBox.innerHTML = `<div style="text-align:center; padding:15px; font-size:14px; color:var(--ink-soft);">✨ 目前無任何待辦事項</div>`;
-    document.getElementById('summaryHint').style.display = 'none';
+    hintEl.style.display = 'none';
     return;
   }
-  sumBox.innerHTML = items.map(item => `
+  sumBox.innerHTML = items.map(item => {
+    const left = item.type === 'bill' ? daysLeft(item.date) : null;
+    const dateColor = left !== null && left < 0 ? 'var(--red)' : left !== null && left <= 3 ? 'var(--amber)' : 'var(--brick)';
+    return `
     <div class="summary-item" onclick="playClickSound(); handleSummaryClick('${item.id}', '${item.type}')">
       <div class="sum-left">
-        <span style="font-size:18px;">${item.icon}</span>
-        <span class="sum-name">${esc(item.title)}</span>
-        <span class="sum-rmk">${esc(item.rmk)}</span>
+        <span style="font-size:20px;flex-shrink:0;">${item.icon}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(item.title)}</div>
+          <div style="font-size:12px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(item.rmk)}</div>
+        </div>
       </div>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <span style="font-size:13px; font-weight:700; color:var(--ink-soft);">${item.amtStr}</span>
-        <span style="font-size:13px; color:var(--brick); font-weight:bold;">${item.date.substring(5)}</span>
+      <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+        <span style="font-size:13px;font-weight:700;color:${dateColor};">${item.date.substring(5)}</span>
+        <span style="font-size:12px;color:var(--ink-soft);">${item.amtStr}</span>
       </div>
     </div>
-  `).join('');
-  document.getElementById('summaryHint').style.display = items.length > 3 ? 'inline' : 'none';
+  `}).join('');
+  hintEl.style.display = items.length > 3 ? 'inline' : 'none';
 }
 
 function checkSummaryScroll() {
@@ -1327,14 +1147,7 @@ function handleSummaryClick(id, type) {
 function toggleBillPaidStatus(id, isPaid) {
   playClickSound();
   const b = state.bills.find(x => String(x.id) === String(id));
-  if(b) {
-    b.paid = isPaid;
-    if (isPaid) {
-       b.payDate = new Date().toISOString().substring(0,10);
-       playSuccessSound();
-    }
-    saveData();
-  }
+  if(b) { b.paid = isPaid; saveData(); if(isPaid) playSuccessSound(); }
 }
 
 function triggerDirectDelete(id, type) {
@@ -1391,7 +1204,6 @@ function quickMarkPaid() {
   const method = document.getElementById('detQuickPayMethod').value;
   b.payMethod = method;
   b.paid = true;
-  b.payDate = new Date().toISOString().substring(0,10);
   saveData();
   playSuccessSound();
   showToast("✅ 已完成繳費，移至歷史紀錄！");
@@ -1421,15 +1233,15 @@ function triggerEditFromDetail() {
 function commitBillDelete() {
   const id = document.getElementById('formBillId').value;
   if(!id) return;
-  showConfirm("確定要刪除這筆帳單記錄嗎？", () => {
-    const b = state.bills.find(x => String(x.id) === String(id));
-    if(b) {
+  const b = state.bills.find(x => String(x.id) === String(id));
+  if(b) {
+    showConfirm(`確定要把「${b.name}」移至回收站嗎？`, () => {
       playDeleteSound();
       state.trash.push({ type: 'bill', data: b, deletedAt: new Date().toLocaleTimeString() });
       state.bills = state.bills.filter(x => String(x.id) !== String(id));
-      saveData(); closeAllSheets(); showToast("已移至回收站，可至設定還原");
-    }
-  });
+      saveData(); closeAllSheets(); showToast('已移至回收站，可至設定還原');
+    });
+  }
 }
 
 function openMemoEdit(id) {
@@ -1437,7 +1249,6 @@ function openMemoEdit(id) {
   if(!m) return;
   document.getElementById('memoSheetTitle').textContent = "修改備忘錄";
   document.getElementById('formMemoId').value = m.id;
-  populateMemoCatOptions(m.cat || '');
   document.getElementById('formMemoTitle').value = m.title;
   document.getElementById('formMemoDate').value = m.date;
   document.getElementById('formMemoContent').value = m.content || '';
@@ -1448,15 +1259,15 @@ function openMemoEdit(id) {
 function commitMemoDelete() {
   const id = document.getElementById('formMemoId').value;
   if(!id) return;
-  showConfirm("確定要刪除這筆備忘錄嗎？", () => {
-    const m = state.memos.find(x => String(x.id) === String(id));
-    if(m) {
+  const m = state.memos.find(x => String(x.id) === String(id));
+  if(m) {
+    showConfirm(`確定要把「${m.title}」移至回收站嗎？`, () => {
       playDeleteSound();
       state.trash.push({ type: 'memo', data: m, deletedAt: new Date().toLocaleTimeString() });
       state.memos = state.memos.filter(x => String(x.id) !== String(id));
-      saveData(); closeAllSheets(); showToast("已移至回收站，可至設定還原");
-    }
-  });
+      saveData(); closeAllSheets(); showToast('已移至回收站，可至設定還原');
+    });
+  }
 }
 
 document.getElementById('formReceiptImg').addEventListener('change', function(e){
@@ -1501,7 +1312,6 @@ function commitBillSave() {
 
 function commitMemoSave() {
   const id = document.getElementById('formMemoId').value;
-  const cat = document.getElementById('formMemoCat').value;
   const title = document.getElementById('formMemoTitle').value.trim();
   const date = document.getElementById('formMemoDate').value;
   const content = document.getElementById('formMemoContent').value.trim();
@@ -1510,9 +1320,9 @@ function commitMemoSave() {
 
   if(id) {
     const m = state.memos.find(x => String(x.id) === String(id));
-    if(m) { m.title = title; m.date = date; m.content = content; m.cat = cat; }
+    if(m) { m.title = title; m.date = date; m.content = content; }
   } else {
-    state.memos.push({ id: 'm_' + Date.now(), title, date, content, cat });
+    state.memos.push({ id: 'm_' + Date.now(), title, date, content });
   }
   saveData(); playSuccessSound(); closeAllSheets(); showToast("✓ 備忘更新存檔成功");
 }
@@ -1556,8 +1366,9 @@ function renderCalendar() {
     const cell = document.createElement('div'); cell.className = 'cal-day';
 
     const info = getLunarInfo(year, month, day);
-    let lunarStr = info.dayName;
-    const lunarClass = (info.dayName === '初一' || info.dayName === '十五') ? 'cal-lunar lunar-red' : 'cal-lunar';
+    const lunarStr = info.dayName;
+    const isRed = (info.dayName === '初一' || info.dayName === '十五');
+    const lunarStyle = isRed ? 'style="color:var(--red);font-weight:700;"' : '';
 
     if(year === tY && month === tM && day === tD) {
       cell.classList.add('today');
@@ -1570,7 +1381,7 @@ function renderCalendar() {
     if(hasBill) dotsHtml += `<span class="dot dot-bill"></span>`;
     if(hasMemo) dotsHtml += `<span class="dot dot-memo"></span>`;
 
-    cell.innerHTML = `<div class="cal-num">${day}</div><div class="${lunarClass}">${lunarStr}</div><div class="cal-dots">${dotsHtml}</div>`;
+    cell.innerHTML = `<div class="cal-num">${day}</div><div class="cal-lunar" ${lunarStyle}>${lunarStr}</div><div class="cal-dots">${dotsHtml}</div>`;
     cell.onclick = () => { playClickSound(); showToast(`${year}/${month}/${day} 農曆 ${info.monthName}${info.dayName}`); };
     box.appendChild(cell);
   }
@@ -1580,7 +1391,6 @@ function loadCategoriesIntoInputs() {
   document.getElementById('editCatLiving').value = state.categories.living.join(', ');
   document.getElementById('editCatTax').value = state.categories.tax.join(', ');
   document.getElementById('editCatOther').value = state.categories.other.join(', ');
-  document.getElementById('editCatMemo').value = (state.categories.memo || []).join(', ');
 }
 
 function saveCustomCategories() {
@@ -1588,7 +1398,6 @@ function saveCustomCategories() {
   state.categories.living = document.getElementById('editCatLiving').value.split(',').map(s => s.trim()).filter(Boolean);
   state.categories.tax = document.getElementById('editCatTax').value.split(',').map(s => s.trim()).filter(Boolean);
   state.categories.other = document.getElementById('editCatOther').value.split(',').map(s => s.trim()).filter(Boolean);
-  state.categories.memo = document.getElementById('editCatMemo').value.split(',').map(s => s.trim()).filter(Boolean);
   saveData(); onMainCatChange(); playSuccessSound(); showToast("✓ 分類細項組已成功自訂同步！");
 }
 
@@ -1657,20 +1466,18 @@ function commitTextImport() {
   } catch(e) { showToast("代碼解析失敗，請確認是否貼完整。"); }
 }
 
-window.onload = async function() {
+window.onload = function() {
   initCalendarDropdowns();
   loadData();
-  removeLegacyZuoyaMemos();
-  loadSyncCode();
-  if(syncCode) { await pullSync(); }
+  state.memos = state.memos.filter(mo => !String(mo.id).startsWith('auto_zuoya_'));
+  autoInsertZuoyaMemos();
   saveData();
   onMainCatChange();
   renderAll();
   updateHeaderDates();
   requestNotifyPermission();
+  resumeTimerIfNeeded();
   setTimeout(checkSoonBillsAndNotify, 1500);
-  if(syncCode) startSyncPolling();
-  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && syncCode) pullSync(); });
 };
 </script>
 </body>
