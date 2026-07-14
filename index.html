@@ -217,6 +217,7 @@ body {
   <div class="today-title">🐻 今日小管家</div>
   <div class="today-row" id="todayBill">🎉 今天沒有待繳帳單</div>
   <div class="today-row" id="todayTask">📝 今天有 0 件待辦事項</div>
+  <div class="today-row" id="todayZuoya" style="display:none;"></div>
   <div class="today-row" id="todayQuote">🌿 今天也要照顧好自己</div>
 </div>
 
@@ -323,6 +324,10 @@ body {
   <div class="sheet-body">
     <input type="hidden" id="formMemoId">
     <div class="form-group">
+      <label class="form-label">備忘類型</label>
+      <select id="formMemoCat" class="form-ctrl"></select>
+    </div>
+    <div class="form-group">
       <label class="form-label">事項名稱</label>
       <input type="text" id="formMemoTitle" class="form-ctrl" placeholder="輸入標題">
     </div>
@@ -407,6 +412,32 @@ body {
     <button class="sheet-close" onclick="closeAllSheets()">×</button>
   </div>
   <div class="sheet-body">
+    <div style="background:var(--blue-light); border:1px dashed var(--blue-soft); padding:10px; border-radius:12px; margin-bottom:16px;">
+      <span style="font-weight:bold; color:var(--blue-soft); font-size:16px;">👨‍👩‍👧 家庭同步（和先生共用）</span>
+      <p style="font-size:12px; color:var(--ink-soft); margin:6px 0;">先貼上你的 Apps Script 網址，再產生代碼給先生輸入，兩人就會自動同步。朋友要用請各自申請 Apps Script 網址，資料完全獨立。</p>
+      <div class="form-group">
+        <label class="form-label" style="font-size:13px;">Apps Script 網址（結尾 /exec）</label>
+        <input id="syncUrlInput" class="form-ctrl" style="font-size:12px;" placeholder="https://script.google.com/macros/s/.../exec">
+        <button class="btn-block" style="background:var(--lavender); padding:8px; font-size:14px; margin-top:6px;" onclick="saveSyncUrl()">💾 儲存網址</button>
+      </div>
+      <div id="syncStatusBox" style="font-size:13px; font-weight:bold; margin-bottom:8px;"></div>
+      <div class="form-group">
+        <label class="form-label" style="font-size:13px;">目前同步代碼</label>
+        <div style="display:flex; gap:6px;">
+          <input id="syncCodeDisplay" class="form-ctrl" readonly style="font-family:monospace; font-weight:bold; text-align:center; letter-spacing:2px;" placeholder="尚未設定">
+          <button class="fab-small" style="background:var(--blue-soft); width:44px; flex-shrink:0;" onclick="copySyncCode()">📋</button>
+        </div>
+      </div>
+      <button class="btn-block" style="background:var(--blue-soft); padding:10px; font-size:15px;" onclick="generateSyncCode()">🔑 產生新代碼（建立家庭同步）</button>
+      <div class="form-group" style="margin-top:10px;">
+        <label class="form-label" style="font-size:13px;">輸入先生給的代碼加入同步</label>
+        <input id="syncCodeInput" class="form-ctrl" style="font-family:monospace; text-transform:uppercase;" placeholder="例如 AB12CD">
+        <button class="btn-block" style="background:var(--sage); padding:10px; font-size:15px; margin-top:6px;" onclick="joinSyncCode()">🔗 加入此代碼同步</button>
+      </div>
+      <button class="btn-del" style="margin-top:8px; padding:8px; font-size:13px;" onclick="stopSync()">🚫 停止同步（改回只存本機）</button>
+    </div>
+
+
     <div style="background:#FFFBF7; border:1px dashed var(--amber); padding:10px; border-radius:12px; margin-bottom:16px;">
       <span style="font-weight:bold; color:var(--amber); font-size:16px;">🔧 自訂帳單下拉細項 (以逗號隔開)</span>
       <div class="form-group" style="margin-top:8px;">
@@ -420,6 +451,10 @@ body {
       <div class="form-group">
         <label class="form-label" style="font-size:13px;">📬 其他帳單細項組</label>
         <textarea id="editCatOther" class="form-ctrl" rows="2" style="font-size:13px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="font-size:13px;">📌 備忘錄類型組</label>
+        <textarea id="editCatMemo" class="form-ctrl" rows="2" style="font-size:13px;"></textarea>
       </div>
       <button class="btn-block" style="background:var(--amber); font-size:15px; padding:10px;" onclick="saveCustomCategories()">儲存更新分類細項組</button>
     </div>
@@ -461,9 +496,21 @@ let state = { bills: [], memos: [], trash: [], filterType: 'all', categories: {}
 const defaultCategories = {
   living: ["水費", "電費", "瓦斯費", "手機費", "網路費", "社區管理費", "信用卡帳單", "保險費", "勞健保", "學費", "停車費、月租費", "房貸", "車貸", "信貸", "其它款項"],
   tax: ["地價稅", "牌照稅", "燃料費", "房屋稅", "綜合所得稅", "其他政府稅費"],
-  other: ["報名費", "罰鍰／罰單", "捐款", "其他費用"]
+  other: ["報名費", "罰鍰／罰單", "捐款", "其他費用"],
+  memo: ["生日", "看診／回診", "聚會", "拜拜", "旅遊", "重要提醒", "其他"]
 };
 const catIcons = { living: '🏡', tax: '💰', other: '📬' };
+
+/* 備忘錄類型圖示對照 (找不到則用 📌) */
+const memoIconRules = [
+  [/生日/, '🎂'], [/看診|回診|醫生|醫院/, '🏥'], [/聚會/, '🎉'],
+  [/拜拜|土地公|作牙/, '🙏'], [/旅遊|出遊/, '✈️'], [/提醒/, '🔔']
+];
+function getMemoIcon(m) {
+  const t = (m.cat || '') + (m.title || '');
+  for (const [re, icon] of memoIconRules) { if (re.test(t)) return icon; }
+  return '📌';
+}
 
 /* 細項關鍵字圖示對照 (找不到則用 💰) */
 const itemIconRules = [
@@ -555,30 +602,26 @@ function notifyUser(title, body) {
   showToast(title + (body ? '：' + body : ''));
 }
 
-/* ════ 自動將「初二／十六」作牙日提前一週寫入備忘錄 ════ */
-function autoInsertZuoyaMemos() {
+/* ════ 作牙提醒改為在「今日小管家」卡片顯示，前2天開始提示 ════ */
+function getZuoyaReminder() {
   const today = new Date(); today.setHours(0,0,0,0);
-  for (let i = 0; i <= 60; i++) {
+  for (let i = 0; i <= 2; i++) {
     const d = new Date(today); d.setDate(d.getDate() + i);
     const y = d.getFullYear(), m = d.getMonth() + 1, day = d.getDate();
     const info = getLunarInfo(y, m, day);
     if (info.dayName === '初二' || info.dayName === '十六') {
-      const eventDateStr = `${y}-${String(m).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-      const reminderDate = new Date(d); reminderDate.setDate(reminderDate.getDate() - 7);
-      const ry = reminderDate.getFullYear(), rm = reminderDate.getMonth()+1, rd = reminderDate.getDate();
-      const reminderDateStr = `${ry}-${String(rm).padStart(2,'0')}-${String(rd).padStart(2,'0')}`;
-      const autoId = 'auto_zuoya_' + eventDateStr;
-      const alreadyExists = state.memos.some(mo => mo.id === autoId) || state.trash.some(t => t.type==='memo' && t.data && t.data.id === autoId);
-      if (!alreadyExists) {
-        state.memos.push({
-          id: autoId,
-          title: `作牙提醒：${m}月${day}日`,
-          date: reminderDateStr,
-          content: `農曆${info.monthName}${info.dayName}（國曆${m}/${day}）為作牙日，提前一週通知準備祭拜事宜。`
-        });
-      }
+      if (i === 0) return `🙏 今天是作牙日（${info.dayName}），記得準備拜拜東西`;
+      return `🙏 ${m}月${day}日是作牙日（${info.dayName}），還有 ${i} 天，記得先準備`;
     }
   }
+  return null;
+}
+
+/* 清除舊版自動寫入的「拜土地公」備忘錄（改用今日小管家卡片提醒，不再需要） */
+function removeLegacyZuoyaMemos() {
+  const before = state.memos.length;
+  state.memos = state.memos.filter(m => !String(m.id).startsWith('auto_zuoya_'));
+  return state.memos.length !== before;
 }
 
 function checkSoonBillsAndNotify() {
@@ -689,7 +732,6 @@ setInterval(() => {
   if(nowD !== currentDayRef) {
     currentDayRef = nowD;
     updateHeaderDates();
-    autoInsertZuoyaMemos();
     if (document.getElementById('calSheet').classList.contains('open')) renderCalendar();
   }
 }, 60000);
@@ -755,6 +797,20 @@ function handleTouchMove(e) {
 
 function initSubCatOptions() {
   if(!state.categories || !state.categories.living) state.categories = JSON.parse(JSON.stringify(defaultCategories));
+  if(!state.categories.memo) state.categories.memo = JSON.parse(JSON.stringify(defaultCategories.memo));
+}
+
+function populateMemoCatOptions(selected) {
+  const sel = document.getElementById('formMemoCat');
+  sel.innerHTML = '';
+  const placeholder = document.createElement('option');
+  placeholder.value = ''; placeholder.textContent = '-- 請選擇類型 ▼ --';
+  sel.appendChild(placeholder);
+  (state.categories.memo || []).forEach(item => {
+    const opt = document.createElement('option'); opt.value = item; opt.textContent = item;
+    sel.appendChild(opt);
+  });
+  sel.value = selected || '';
 }
 
 function selectMainCat(cat) {
@@ -817,9 +873,169 @@ function resetToDefault() {
 }
 
 function saveData() {
+  state.updatedAt = Date.now();
   localStorage.setItem('bear_小管家_pro_data', JSON.stringify(state));
   renderAll();
   document.getElementById('txtBackupCode').value = JSON.stringify(state);
+  if(syncCode) pushSync();
+}
+
+/* ===== 家庭同步（Apps Script + 配對代碼）===== */
+let syncCode = null;
+let syncUrl = '';
+let syncInterval = null;
+
+function loadSyncCode() {
+  syncCode = localStorage.getItem('bear_sync_code') || null;
+  syncUrl = localStorage.getItem('bear_sync_url') || '';
+  const urlInput = document.getElementById('syncUrlInput');
+  if(urlInput) urlInput.value = syncUrl;
+}
+
+function saveSyncUrl() {
+  playClickSound();
+  const input = document.getElementById('syncUrlInput');
+  syncUrl = (input.value || '').trim();
+  localStorage.setItem('bear_sync_url', syncUrl);
+  showToast(syncUrl ? '✓ 網址已儲存' : '已清空網址');
+}
+
+function updateSyncStatusUI(text, color) {
+  const box = document.getElementById('syncStatusBox');
+  const disp = document.getElementById('syncCodeDisplay');
+  if(disp) disp.value = syncCode || '';
+  if(box) {
+    box.textContent = text || (syncCode ? ('✅ 已與代碼 ' + syncCode + ' 同步中') : '⚪ 尚未啟用同步（僅存本機）');
+    box.style.color = color || (syncCode ? 'var(--sage)' : 'var(--ink-soft)');
+  }
+}
+
+function genRandomCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let s = '';
+  for(let i=0; i<6; i++) s += chars[Math.floor(Math.random()*chars.length)];
+  return s;
+}
+
+async function generateSyncCode() {
+  playClickSound();
+  if(!syncUrl) { updateSyncStatusUI('❌ 請先貼上並儲存 Apps Script 網址', 'var(--red)'); return; }
+  const code = genRandomCode();
+  updateSyncStatusUI('⏳ 建立中...', 'var(--amber)');
+  try {
+    state.updatedAt = Date.now();
+    await remoteSet(code, state);
+    syncCode = code;
+    localStorage.setItem('bear_sync_code', code);
+    startSyncPolling();
+    updateSyncStatusUI();
+    playSuccessSound();
+    showToast('✓ 已產生同步代碼：' + code + '，傳給先生輸入即可');
+  } catch(e) {
+    updateSyncStatusUI('❌ 建立失敗：' + (e && e.message ? e.message : String(e)), 'var(--red)');
+  }
+}
+
+async function joinSyncCode() {
+  playClickSound();
+  if(!syncUrl) { updateSyncStatusUI('❌ 請先貼上並儲存 Apps Script 網址', 'var(--red)'); return; }
+  const input = document.getElementById('syncCodeInput');
+  const code = (input.value || '').trim().toUpperCase();
+  if(!code) { showToast('請先輸入代碼'); return; }
+  updateSyncStatusUI('⏳ 連線中...', 'var(--amber)');
+  try {
+    const remote = await remoteGet(code);
+    if(remote) {
+      applyRemoteState(remote);
+      showToast('✓ 已加入同步，資料已更新');
+    } else {
+      state.updatedAt = Date.now();
+      await remoteSet(code, state);
+      showToast('✓ 已用此代碼建立同步');
+    }
+    syncCode = code;
+    localStorage.setItem('bear_sync_code', code);
+    startSyncPolling();
+    updateSyncStatusUI();
+    playSuccessSound();
+    input.value = '';
+  } catch(e) {
+    updateSyncStatusUI('❌ 加入失敗：' + (e && e.message ? e.message : String(e)), 'var(--red)');
+  }
+}
+
+function stopSync() {
+  playClickSound();
+  showConfirm('確定要停止同步嗎？之後資料只會存在這台裝置，不會再跟先生同步。', () => {
+    syncCode = null;
+    localStorage.removeItem('bear_sync_code');
+    if(syncInterval) clearInterval(syncInterval);
+    updateSyncStatusUI('⚪ 已停止同步（僅存本機）', 'var(--ink-soft)');
+    showToast('已停止同步');
+  });
+}
+
+function copySyncCode() {
+  if(!syncCode) { showToast('尚未設定同步代碼'); return; }
+  const el = document.getElementById('syncCodeDisplay');
+  el.select(); el.setSelectionRange(0, 999);
+  try { document.execCommand('copy'); showToast('📋 代碼已複製，傳給先生貼上即可'); }
+  catch(e) { showToast('請手動選取複製代碼'); }
+}
+
+function applyRemoteState(remote) {
+  state = remote;
+  if(!state.trash) state.trash = [];
+  if(!state.filterType) state.filterType = 'all';
+  if(!state.categories) state.categories = JSON.parse(JSON.stringify(defaultCategories));
+  localStorage.setItem('bear_小管家_pro_data', JSON.stringify(state));
+  initSubCatOptions();
+  renderAll();
+  const backupBox = document.getElementById('txtBackupCode');
+  if(backupBox) backupBox.value = JSON.stringify(state);
+}
+
+async function remoteGet(code) {
+  const res = await fetch(syncUrl + '?code=' + encodeURIComponent(code), { method: 'GET' });
+  if(!res.ok) throw new Error('連線失敗 (' + res.status + ')');
+  const text = await res.text();
+  if(!text) return null;
+  try { return JSON.parse(text); } catch(e) { throw new Error('回應格式錯誤'); }
+}
+
+async function remoteSet(code, data) {
+  const body = new URLSearchParams();
+  body.set('code', code);
+  body.set('data', JSON.stringify(data));
+  const res = await fetch(syncUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString()
+  });
+  if(!res.ok) throw new Error('連線失敗 (' + res.status + ')');
+}
+
+async function pushSync() {
+  if(!syncCode || !syncUrl) return;
+  try { await remoteSet(syncCode, state); }
+  catch(e) { /* 靜默失敗，下次存檔或輪詢會再試 */ }
+}
+
+async function pullSync() {
+  if(!syncCode || !syncUrl) return;
+  try {
+    const remote = await remoteGet(syncCode);
+    if(remote && (remote.updatedAt || 0) > (state.updatedAt || 0)) {
+      applyRemoteState(remote);
+      updateSyncStatusUI('✅ 已同步先生的最新更新');
+    }
+  } catch(e) { /* 靜默失敗 */ }
+}
+
+function startSyncPolling() {
+  if(syncInterval) clearInterval(syncInterval);
+  if(!syncCode) return;
+  syncInterval = setInterval(pullSync, 8000);
 }
 
 function compressAndGetBase64(file, callback) {
@@ -870,7 +1086,7 @@ function switchTab(tab) {
 function openSheet(id) {
   document.getElementById('backdrop').classList.add('show');
   document.getElementById(id).classList.add('open');
-  if(id === 'settingSheet') loadCategoriesIntoInputs();
+  if(id === 'settingSheet') { loadCategoriesIntoInputs(); loadSyncCode(); updateSyncStatusUI(); renderTrash(); if(syncCode) pullSync(); }
   if(id === 'calSheet') renderCalendar();
 }
 function closeAllSheets() {
@@ -886,6 +1102,7 @@ function openAddSheet() {
   if (currentTab === 'memo') {
     document.getElementById('memoSheetTitle').textContent = "新增備忘錄";
     document.getElementById('formMemoId').value = "";
+    populateMemoCatOptions('');
     document.getElementById('formMemoTitle').value = "";
     document.getElementById('formMemoDate').value = new Date().toISOString().substring(0,10);
     document.getElementById('formMemoContent').value = "";
@@ -917,7 +1134,6 @@ function renderTodayAssistant() {
   const now = new Date();
   const localYYYYMMDD = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 
-  // 1. 帳單處理 (優先順序：逾期 > 今日到期 > 3天內到期 > 無待繳)
   const unpaid = state.bills.filter(b => !b.paid);
   let overdue = 0, dueToday = 0, dueSoon = 0;
   unpaid.forEach(b => {
@@ -936,13 +1152,11 @@ function renderTodayAssistant() {
     billText = `💡 有 ${dueSoon} 筆帳單即將到期（3天內）`;
   }
 
-  // 2. 待辦事項處理 (計算日期為今天的備忘錄)
   const todayMemos = state.memos.filter(m => m.date === localYYYYMMDD);
   const taskText = todayMemos.length > 0 
     ? `📝 今天有 ${todayMemos.length} 件待辦事項` 
     : `📝 今天沒有待辦事項`;
 
-  // 3. 每日一句處理 (根據當年度經過的天數決定索引)
   const start = new Date(now.getFullYear(), 0, 0);
   const dayOfYear = Math.floor((now - start) / 86400000);
   const quote = warmQuotes[dayOfYear % warmQuotes.length];
@@ -950,6 +1164,11 @@ function renderTodayAssistant() {
   document.getElementById('todayBill').textContent = billText;
   document.getElementById('todayTask').textContent = taskText;
   document.getElementById('todayQuote').textContent = `🌿 ${quote}`;
+
+  const zuoyaEl = document.getElementById('todayZuoya');
+  const zuoyaText = getZuoyaReminder();
+  if (zuoyaText) { zuoyaEl.textContent = zuoyaText; zuoyaEl.style.display = 'block'; }
+  else { zuoyaEl.style.display = 'none'; }
 }
 
 function renderStats() {
@@ -1049,10 +1268,10 @@ function renderLists() {
         <div class="swipe-back-layer" onclick="triggerDirectDelete('${m.id}', 'memo'); event.stopPropagation();">刪除</div>
         <div class="swipe-front-layer" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" onclick="openMemoEdit('${m.id}')">
           <div class="item-left">
-            <span class="cat-icon">📌</span>
+            <span class="cat-icon">${getMemoIcon(m)}</span>
             <div class="item-info">
               <div class="item-title">${esc(m.title)}</div>
-              <div class="item-desc">${esc(m.content)}</div>
+              <div class="item-desc">${m.cat ? esc(m.cat) + ' | ' : ''}${esc(m.content)}</div>
             </div>
           </div>
           <div class="item-right">
@@ -1071,7 +1290,7 @@ function renderPendingSummary() {
     items.push({ id: b.id, type: 'bill', date: b.due, title: b.name, rmk: b.rmk || '未繳費', amtStr: `$${fmtAmt(b.amt)}`, icon: getItemIcon(b) });
   });
   state.memos.forEach(m => {
-    items.push({ id: m.id, type: 'memo', date: m.date, title: m.title, rmk: m.content || '重要備忘', amtStr: '備忘', icon: '📌' });
+    items.push({ id: m.id, type: 'memo', date: m.date, title: m.title, rmk: m.content || m.cat || '重要備忘', amtStr: '備忘', icon: getMemoIcon(m) });
   });
   items.sort((a,b) => new Date(a.date) - new Date(b.date));
 
@@ -1218,6 +1437,7 @@ function openMemoEdit(id) {
   if(!m) return;
   document.getElementById('memoSheetTitle').textContent = "修改備忘錄";
   document.getElementById('formMemoId').value = m.id;
+  populateMemoCatOptions(m.cat || '');
   document.getElementById('formMemoTitle').value = m.title;
   document.getElementById('formMemoDate').value = m.date;
   document.getElementById('formMemoContent').value = m.content || '';
@@ -1281,6 +1501,7 @@ function commitBillSave() {
 
 function commitMemoSave() {
   const id = document.getElementById('formMemoId').value;
+  const cat = document.getElementById('formMemoCat').value;
   const title = document.getElementById('formMemoTitle').value.trim();
   const date = document.getElementById('formMemoDate').value;
   const content = document.getElementById('formMemoContent').value.trim();
@@ -1289,9 +1510,9 @@ function commitMemoSave() {
 
   if(id) {
     const m = state.memos.find(x => String(x.id) === String(id));
-    if(m) { m.title = title; m.date = date; m.content = content; }
+    if(m) { m.title = title; m.date = date; m.content = content; m.cat = cat; }
   } else {
-    state.memos.push({ id: 'm_' + Date.now(), title, date, content });
+    state.memos.push({ id: 'm_' + Date.now(), title, date, content, cat });
   }
   saveData(); playSuccessSound(); closeAllSheets(); showToast("✓ 備忘更新存檔成功");
 }
@@ -1359,6 +1580,7 @@ function loadCategoriesIntoInputs() {
   document.getElementById('editCatLiving').value = state.categories.living.join(', ');
   document.getElementById('editCatTax').value = state.categories.tax.join(', ');
   document.getElementById('editCatOther').value = state.categories.other.join(', ');
+  document.getElementById('editCatMemo').value = (state.categories.memo || []).join(', ');
 }
 
 function saveCustomCategories() {
@@ -1366,6 +1588,7 @@ function saveCustomCategories() {
   state.categories.living = document.getElementById('editCatLiving').value.split(',').map(s => s.trim()).filter(Boolean);
   state.categories.tax = document.getElementById('editCatTax').value.split(',').map(s => s.trim()).filter(Boolean);
   state.categories.other = document.getElementById('editCatOther').value.split(',').map(s => s.trim()).filter(Boolean);
+  state.categories.memo = document.getElementById('editCatMemo').value.split(',').map(s => s.trim()).filter(Boolean);
   saveData(); onMainCatChange(); playSuccessSound(); showToast("✓ 分類細項組已成功自訂同步！");
 }
 
@@ -1434,16 +1657,20 @@ function commitTextImport() {
   } catch(e) { showToast("代碼解析失敗，請確認是否貼完整。"); }
 }
 
-window.onload = function() {
+window.onload = async function() {
   initCalendarDropdowns();
   loadData();
-  autoInsertZuoyaMemos();
+  removeLegacyZuoyaMemos();
+  loadSyncCode();
+  if(syncCode) { await pullSync(); }
   saveData();
   onMainCatChange();
   renderAll();
   updateHeaderDates();
   requestNotifyPermission();
   setTimeout(checkSoonBillsAndNotify, 1500);
+  if(syncCode) startSyncPolling();
+  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && syncCode) pullSync(); });
 };
 </script>
 </body>
