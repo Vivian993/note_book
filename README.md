@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>🐻 日常小管家 Pro</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #FDF9F4;
+  --card: #FFFFFF;
+  --ink: #3D3530;
+  --ink-soft: #8B7D72;
+  --border: #EDE5DC;
+  --border2: #F5EFE8;
+  --red: #C0392B;
+  --brick: #C4756B;
+  --brick-light: #FBF0EE;
+  --sage: #6E9E82;
+  --sage-light: #EAF4EE;
+  --amber: #D4A44C;
+  --amber-light: #FDF5E4;
+  --lavender: #9A8AA6;
+  --blue-soft: #6A8EAE;
+  --blue-light: #EBF1F5;
+}
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background-color: var(--cream);
+  color: var(--ink);
+  line-height: 1.5;
+  font-size: 17px;
+  padding: 12px 12px 40px 12px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.header-zone {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card);
+  padding: 14px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(139,125,114,0.06);
+  margin-bottom: 12px;
+}
+.header-title { font-size: 24px; font-weight: 700; }
+.header-date-box { text-align: right; cursor: pointer; background: var(--border2); padding: 6px 12px; border-radius: 12px; }
+.header-gregorian { font-size: 15px; font-weight: 700; color: var(--ink); }
+.header-lunar { font-size: 13px; color: var(--amber); font-weight: 500; }
+
+/* 🐻 今日小管家卡片樣式 */
+.today-assistant-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(139,125,114,0.06);
+}
+.today-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 8px;
+}
+.today-row {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.today-row:last-child {
+  margin-bottom: 0;
+}
+
+.tabs { display: flex; background: var(--border2); padding: 4px; border-radius: 14px; margin-bottom: 12px; }
+.tab-btn { flex: 1; border: none; background: transparent; padding: 12px 0; font-size: 18px; font-weight: 500; color: var(--ink-soft); cursor: pointer; border-radius: 10px; text-align: center; }
+.tab-btn.active { background: var(--card); color: var(--ink); font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 2px; text-align: center; cursor: pointer; transition: background 0.1s; }
+.stat-card:active { background: var(--border2); }
+.stat-label { font-size: 13px; color: var(--ink-soft); margin-bottom: 2px; }
+.stat-val { font-size: 15px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stat-card.alert .stat-val { color: var(--red); }
+.stat-card.active-filter { border: 2px solid var(--amber); background: var(--amber-light); }
+
+.filter-bar { background: var(--amber-light); padding: 8px 12px; border-radius: 10px; margin-bottom: 10px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--amber); }
+.filter-reset-btn { background: var(--amber); color: white; border: none; padding: 3px 8px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold; }
+
+.list-container { display: none; margin-bottom: 16px; }
+.list-container.active { display: block; }
+
+.swipe-container { position: relative; overflow: hidden; border-radius: 16px; margin-bottom: 10px; background: var(--red); }
+.swipe-back-layer { position: absolute; top: 0; right: 0; bottom: 0; width: 80px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 16px; cursor: pointer; z-index: 1; }
+.swipe-front-layer { position: relative; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; display: flex; align-items: center; justify-content: space-between; z-index: 2; transition: transform 0.2s ease-out; transform: translateX(0); }
+.swipe-container.swiped .swipe-front-layer { transform: translateX(-80px); }
+
+.item-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.item-cb { width: 24px; height: 24px; accent-color: var(--sage); cursor: pointer; flex-shrink: 0; }
+.item-info { flex: 1; min-width: 0; cursor: pointer; }
+.item-title { font-weight: 700; font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-desc { font-size: 14px; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.item-right { text-align: right; flex-shrink: 0; margin-left: 8px; }
+.item-price { font-weight: 700; font-size: 18px; color: var(--ink); }
+.item-tag { font-size: 12px; padding: 2px 6px; border-radius: 6px; font-weight: 500; display: inline-block; margin-top: 4px; }
+.tag-danger { background: var(--brick-light); color: var(--red); }
+.tag-warn { background: var(--amber-light); color: var(--amber); }
+.tag-safe { background: var(--sage-light); color: var(--sage); }
+.cat-icon { font-size: 22px; flex-shrink: 0; width: 28px; text-align: center; }
+
+.bottom-summary-panel { background: #FFFDFC; border: 2px solid var(--amber); border-radius: 20px; padding: 14px; margin-top: 16px; box-shadow: 0 -4px 16px rgba(212,164,76,0.08); }
+.summary-header { font-size: 17px; font-weight: 700; color: var(--amber); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border); padding-bottom: 6px; }
+.summary-scroll-hint { font-size: 12px; color: var(--red); font-weight: bold; display: none; animation: blink 1.5s infinite; }
+@keyframes blink { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+.summary-list { display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto; }
+.summary-list::-webkit-scrollbar { width: 6px; }
+.summary-list::-webkit-scrollbar-thumb { background: var(--amber); border-radius: 4px; }
+.summary-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.sum-left { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+.sum-name { font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sum-rmk { font-size: 12px; color: var(--ink-soft); background: var(--border2); padding: 1px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+
+.fab-small { width: 40px; height: 40px; border-radius: 12px; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+.fab-add { background: var(--sage); font-size: 24px; }
+.fab-setting { background: var(--amber); font-size: 20px; }
+
+.backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(212,164,76,0.28); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 100; backdrop-filter: blur(2px); }
+.backdrop.show { opacity: 1; pointer-events: auto; }
+.sheet { position: fixed; bottom: 0; left: 0; width: 100%; max-height: 88vh; background: var(--cream); border-top-left-radius: 24px; border-top-right-radius: 24px; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 101; display: flex; flex-direction: column; padding: 16px; }
+.sheet.open { transform: translateY(0); }
+.sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.sheet-title { font-size: 20px; font-weight: 700; }
+.sheet-close { background: none; border: none; font-size: 26px; cursor: pointer; color: var(--ink-soft); }
+.sheet-body { overflow-y: auto; flex: 1; padding-bottom: 40px; }
+
+.form-group { margin-bottom: 12px; }
+.form-label { display: block; font-size: 16px; font-weight: 700; margin-bottom: 4px; color: var(--ink); }
+.form-ctrl { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 11px; font-size: 16px; color: var(--ink); background: var(--card); outline: none; -webkit-appearance: none; }
+
+.btn-block { width: 100%; background: var(--sage); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; margin-top: 10px; text-align: center; }
+.btn-del { width: 100%; background: transparent; color: var(--red); border: 1px solid var(--red); padding: 12px; border-radius: 12px; font-size: 16px; cursor: pointer; margin-top: 10px; font-weight: bold; text-align: center; }
+
+.cat-select-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.cat-select-btn { flex: 1; border: 2px solid var(--border); background: var(--card); padding: 12px 4px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; text-align: center; color: var(--ink-soft); }
+.cat-select-btn.active { border-color: var(--sage); background: var(--sage-light); color: var(--ink); }
+
+#calSheet { max-height: 95vh; }
+.cal-ctrl-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+.cal-select { padding: 6px 12px; font-size: 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); font-weight: bold; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+.cal-head { font-weight: 700; font-size: 14px; color: var(--ink-soft); padding: 4px 0; }
+.cal-day { background: var(--card); border: 1px solid var(--border2); border-radius: 8px; padding: 6px 1px; min-height: 58px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; }
+.cal-day.empty { background: transparent; border: none; cursor: default; }
+.cal-day.today { border: 2px solid var(--amber); background: var(--amber-light); }
+.cal-num { font-size: 15px; font-weight: 700; }
+.cal-lunar { font-size: 11px; color: var(--ink-soft); scale: 0.9; }
+.cal-dots { display: flex; justify-content: center; gap: 2px; height: 5px; }
+.dot { width: 5px; height: 5px; border-radius: 50%; }
+.dot-bill { background: var(--red); }
+.dot-memo { background: var(--lavender); }
+
+.detail-row { margin-bottom: 10px; font-size: 17px; }
+.detail-lbl { color: var(--ink-soft); font-size: 14px; }
+.detail-val { font-weight: 700; }
+.img-box { margin-top: 6px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #fdfdfd; max-height: 160px; display: flex; justify-content: center; align-items: center; }
+.img-box img { max-width: 100%; max-height: 160px; object-fit: contain; }
+
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(61,53,48,0.95); color: white; padding: 10px 20px; border-radius: 20px; font-size: 15px; z-index: 200; opacity: 0; pointer-events: none; transition: 0.3s; text-align: center; }
+.toast.show { opacity: 1; }
+
+.lunar-red { color: var(--red) !important; font-weight: 700; }
+.lunar-note { display: none; font-size: 13px; font-weight: 700; text-align: center; padding: 8px 10px; border-radius: 12px; margin-bottom: 10px; border: 1px solid transparent; }
+.lunar-note.show { display: block; }
+.lunar-note.zuoya { background: var(--amber-light); border-color: var(--amber); color: var(--amber); }
+.lunar-note.holiday { background: var(--brick-light); border-color: var(--brick); color: var(--brick); }
+.lunar-note.quote { background: var(--blue-light); border-color: var(--blue-soft); color: var(--blue-soft); font-weight: 500;}
+
+.confirm-modal-backdrop { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(212,164,76,0.32); z-index:300; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:0.2s; }
+.confirm-modal-backdrop.show { opacity:1; pointer-events:auto; }
+.confirm-modal-box { background:var(--cream); border-radius:16px; padding:20px; width:80%; max-width:320px; text-align:center; box-shadow:0 8px 24px rgba(0,0,0,0.2); }
+.confirm-modal-box p { font-size:16px; font-weight:700; margin-bottom:16px; line-height:1.5; }
+.confirm-modal-btns { display:flex; gap:10px; }
+.confirm-modal-btns button { flex:1; border:none; padding:10px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; }
+.confirm-btn-no { background:var(--border2); color:var(--ink); }
+.confirm-btn-yes { background:var(--red); color:white; }
+
+.item-soon-bg .swipe-front-layer { background: var(--amber-light); }
+.item-overdue-bg .swipe-front-layer { background: var(--brick-light); }
+</style>
+</head>
+<body>
+
+<div id="lunarNote" class="lunar-note"></div>
+
+<div class="header-zone">
+  <div class="header-title" onclick="playClickSound()">🐻 日常小管家</div>
+  <div class="header-date-box" onclick="playClickSound(); openSheet('calSheet')">
+    <div id="headerGregorian" class="header-gregorian">--</div>
+    <div class="header-lunar">農曆 <span id="headerLunar">--</span> 📅</div>
+  </div>
+</div>
+
+<div id="todayAssistantCard" class="today-assistant-card">
+  <div class="today-title">🐻 今日小管家</div>
+  <div class="today-row" id="todayBill">🎉 今天沒有待繳帳單</div>
+  <div class="today-row" id="todayTask">📝 今天有 0 件待辦事項</div>
+  <div class="today-row" id="todayQuote">🌿 今天也要照顧好自己</div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="playClickSound(); switchTab('unpaid')">待繳帳單</button>
+  <button class="tab-btn" onclick="playClickSound(); switchTab('paid')">已繳歷史</button>
+  <button class="tab-btn" onclick="playClickSound(); switchTab('memo')">備忘錄</button>
+</div>
+
+<div class="stats-grid">
+  <div id="card-all-amt" class="stat-card" onclick="playClickSound(); setBillFilter('all')">
+    <div class="stat-label">待繳金額</div><div id="statAmt" class="stat-val">$0</div>
+  </div>
+  <div id="card-all-count" class="stat-card" onclick="playClickSound(); setBillFilter('all')">
+    <div class="stat-label">待繳筆數</div><div id="statCount" class="stat-val">0 筆</div>
+  </div>
+  <div id="card-soon" class="stat-card alert" onclick="playClickSound(); setBillFilter('soon')">
+    <div class="stat-label">即將到期</div><div id="statSoon" class="stat-val">0 筆</div>
+  </div>
+  <div id="card-over" class="stat-card alert" onclick="playClickSound(); setBillFilter('overdue')">
+    <div class="stat-label">已逾期</div><div id="statOver" class="stat-val">0 筆</div>
+  </div>
+</div>
+
+<div id="tab-unpaid" class="list-container active"></div>
+<div id="tab-paid" class="list-container"></div>
+<div id="tab-memo" class="list-container"></div>
+
+<div class="bottom-summary-panel">
+  <div class="summary-header">
+    <div style="display:flex; align-items:center; gap: 4px;">
+      <span>🔔 待處理事項 (依日期)</span>
+      <span id="summaryHint" class="summary-scroll-hint">⬇️</span>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="fab-small fab-setting" onclick="playClickSound(); openSheet('settingSheet')">⚙️</button>
+      <button class="fab-small fab-add" onclick="playClickSound(); openAddSheet()">＋</button>
+    </div>
+  </div>
+  <div id="summaryList" class="summary-list" onscroll="checkSummaryScroll()"></div>
+</div>
+
+<div id="backdrop" class="backdrop" onclick="closeAllSheets()"></div>
+
+<div id="billSheet" class="sheet">
+  <div class="sheet-header">
+    <div id="billSheetTitle" class="sheet-title">新增帳單</div>
+    <button class="sheet-close" onclick="closeAllSheets()">×</button>
+  </div>
+  <div class="sheet-body">
+    <input type="hidden" id="formBillId">
+
+    <label class="form-label">選擇帳單類別</label>
+    <div class="cat-select-row" id="mainCatBtnRow">
+      <button type="button" class="cat-select-btn active" data-cat="living" onclick="playClickSound(); selectMainCat('living')">🏡 生活帳單</button>
+      <button type="button" class="cat-select-btn" data-cat="tax" onclick="playClickSound(); selectMainCat('tax')">💰 稅務帳單</button>
+      <button type="button" class="cat-select-btn" data-cat="other" onclick="playClickSound(); selectMainCat('other')">📬 其他帳單</button>
+    </div>
+    <input type="hidden" id="formBillMainCat" value="living">
+
+    <div class="form-group">
+      <label class="form-label">選擇帳單細項</label>
+      <select id="formBillSubCat" class="form-ctrl" onchange="playClickSound(); onSubCatChange()"></select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">應繳金額</label>
+      <input type="number" id="formBillAmt" class="form-ctrl" placeholder="請輸入金額">
+    </div>
+    <div class="form-group">
+      <label class="form-label">截止日期</label>
+      <input type="date" id="formBillDue" class="form-ctrl">
+    </div>
+    <div class="form-group">
+      <label class="form-label">小備註</label>
+      <input type="text" id="formBillRmk" class="form-ctrl" placeholder="加註說明">
+    </div>
+    <div class="form-group">
+      <label class="form-label">繳費方式</label>
+      <select id="formBillMethod" class="form-ctrl">
+        <option value="未指定">-- 請選擇繳費方式 --</option>
+        <option value="現金">現金</option>
+        <option value="銀行轉帳">銀行轉帳</option>
+        <option value="信用卡">信用卡</option>
+        <option value="超商繳費">超商繳費</option>
+        <option value="行動支付">行動支付 (LINE Pay / 街口)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">單據照片 (背景Canvas智能防卡壓縮機制)</label>
+      <input type="file" id="formBillImg" class="form-ctrl" accept="image/*">
+    </div>
+
+    <button class="btn-block" onclick="playClickSound(); commitBillSave()">確認儲存</button>
+    <button id="btnBillDel" class="btn-del" style="display:none;" onclick="commitBillDelete()">刪除此帳單項目</button>
+  </div>
+</div>
+
+<div id="memoSheet" class="sheet">
+  <div class="sheet-header">
+    <div id="memoSheetTitle" class="sheet-title">新增備忘錄</div>
+    <button class="sheet-close" onclick="closeAllSheets()">×</button>
+  </div>
+  <div class="sheet-body">
+    <input type="hidden" id="formMemoId">
+    <div class="form-group">
+      <label class="form-label">事項名稱</label>
+      <input type="text" id="formMemoTitle" class="form-ctrl" placeholder="輸入標題">
+    </div>
+    <div class="form-group">
+      <label class="form-label">預定日期</label>
+      <input type="date" id="formMemoDate" class="form-ctrl">
+    </div>
+    <div class="form-group">
+      <label class="form-label">詳細備註內容</label>
+      <textarea id="formMemoContent" class="form-ctrl" rows="3" placeholder="請填寫內容"></textarea>
+    </div>
+    <button class="btn-block" onclick="playClickSound(); commitMemoSave()">確認儲存</button>
+    <button id="btnMemoDel" class="btn-del" style="display:none;" onclick="commitMemoDelete()">刪除此備忘事項</button>
+  </div>
+</div>
+
+<div id="calSheet" class="sheet">
+  <div class="sheet-header">
+    <div class="sheet-title">📅 國曆農曆對照月曆</div>
+    <button class="sheet-close" onclick="closeAllSheets()">×</button>
+  </div>
+  <div class="sheet-body" style="padding-bottom:20px;">
+    <div class="cal-ctrl-row">
+      <select id="calYearSelect" class="cal-select" onchange="playClickSound(); renderCalendar()"></select>
+      <select id="calMonthSelect" class="cal-select" onchange="playClickSound(); renderCalendar()"></select>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-head">(日)</div><div class="cal-head">(一)</div><div class="cal-head">(二)</div>
+      <div class="cal-head">(三)</div><div class="cal-head">(四)</div><div class="cal-head">(五)</div><div class="cal-head">(六)</div>
+    </div>
+    <div class="cal-grid" id="calDaysBox"></div>
+  </div>
+</div>
+
+<div id="detSheet" class="sheet">
+  <div class="sheet-header">
+    <div class="sheet-title">📄 帳單詳細資料</div>
+    <button class="sheet-close" onclick="closeDetailSheet()">×</button>
+  </div>
+  <div class="sheet-body">
+    <input type="hidden" id="detBillId">
+    <div class="detail-row"><span class="detail-lbl">項目名稱：</span><span id="detName" class="detail-val"></span></div>
+    <div class="detail-row"><span class="detail-lbl">應繳金額：</span><span id="detAmt" class="detail-val"></span></div>
+    <div class="detail-row"><span class="detail-lbl">截止日期：</span><span id="detDue" class="detail-val"></span></div>
+    <div class="detail-row"><span class="detail-lbl">繳費方式：</span><span id="detMethod" class="detail-val"></span></div>
+    <div class="detail-row"><span class="detail-lbl">目前狀態：</span><span id="detStatus" class="detail-val"></span></div>
+    <div class="detail-row"><span class="detail-lbl">備註說明：</span><span id="detRmk" class="detail-val"></span></div>
+    <div class="detail-row" id="detImgRow">
+      <span class="detail-lbl">原始帳單照片：</span>
+      <div class="img-box"><img id="detImgView" src="" alt="無圖"></div>
+    </div>
+
+    <div class="detail-row" id="quickPayRow" style="display:none;">
+      <label class="form-label" style="color:var(--sage); margin-top:10px;">⚡ 一鍵極速繳費</label>
+      <select id="detQuickPayMethod" class="form-ctrl" style="margin-bottom:8px;">
+        <option value="未指定">-- 請選擇繳費方式 --</option>
+        <option value="現金">現金</option>
+        <option value="銀行轉帳">銀行轉帳</option>
+        <option value="信用卡">信用卡</option>
+        <option value="超商繳費">超商繳費</option>
+        <option value="行動支付">行動支付 (LINE Pay / 街口)</option>
+      </select>
+      <button class="btn-block" style="background:var(--sage); font-size:19px;" onclick="quickMarkPaid()">✅ 已完成繳費</button>
+    </div>
+
+    <div class="detail-row" id="receiptUploadRow">
+      <label class="form-label" style="color:var(--sage); margin-top:10px;">📸 上傳繳費證明收據</label>
+      <input type="file" id="formReceiptImg" class="form-ctrl" accept="image/*">
+    </div>
+    <div class="detail-row" id="detReceiptRow" style="display:none;">
+      <span class="detail-lbl">繳費證明收據：</span>
+      <div class="img-box"><img id="detReceiptView" src="" alt="無收據"></div>
+    </div>
+
+    <button class="btn-block" style="background:var(--amber);" onclick="playClickSound(); triggerEditFromDetail()">🔧 修改這筆內容</button>
+  </div>
+</div>
+
+<div id="settingSheet" class="sheet">
+  <div class="sheet-header">
+    <div class="sheet-title">⚙️ 系統資料與自訂後台</div>
+    <button class="sheet-close" onclick="closeAllSheets()">×</button>
+  </div>
+  <div class="sheet-body">
+    <div style="background:#FFFBF7; border:1px dashed var(--amber); padding:10px; border-radius:12px; margin-bottom:16px;">
+      <span style="font-weight:bold; color:var(--amber); font-size:16px;">🔧 自訂帳單下拉細項 (以逗號隔開)</span>
+      <div class="form-group" style="margin-top:8px;">
+        <label class="form-label" style="font-size:13px;">🏡 生活帳單細項組</label>
+        <textarea id="editCatLiving" class="form-ctrl" rows="2" style="font-size:13px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="font-size:13px;">💰 稅務帳單細項組</label>
+        <textarea id="editCatTax" class="form-ctrl" rows="2" style="font-size:13px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="font-size:13px;">📬 其他帳單細項組</label>
+        <textarea id="editCatOther" class="form-ctrl" rows="2" style="font-size:13px;"></textarea>
+      </div>
+      <button class="btn-block" style="background:var(--amber); font-size:15px; padding:10px;" onclick="saveCustomCategories()">儲存更新分類細項組</button>
+    </div>
+
+    <div style="background:#FDF2F1; border:1px dashed var(--red); padding:10px; border-radius:12px; margin-bottom:16px;">
+      <span style="font-weight:bold; color:var(--red); font-size:16px;">🗑️ 垃圾桶回收站 (<span id="trashCount">0</span> 筆)</span>
+      <p style="font-size:12px; color:var(--ink-soft); margin-bottom:6px;">防誤刪機制：此處可手動救援還原或永久斬除。</p>
+      <div id="trashListBox" style="max-height:140px; overflow-y:auto; background:white; border:1px solid var(--border); border-radius:8px; padding:6px; font-size:13px;"></div>
+      <button class="btn-del" style="margin-top:6px; padding:8px; font-size:14px;" onclick="clearAllTrashPermanently()">💥 徹底清空垃圾桶</button>
+    </div>
+
+    <label class="form-label">本機文字備份代碼</label>
+    <textarea id="txtBackupCode" class="form-ctrl" rows="3" readonly style="font-size:11px; font-family:monospace; background:#f9f9f9;"></textarea>
+    <button class="btn-block" style="background:var(--lavender); padding:10px; font-size:15px;" onclick="playClickSound(); copyBackupCode()">📋 一鍵複製全份備份碼</button>
+
+    <div class="form-group" style="margin-top:12px;">
+      <label class="form-label">還原舊有資料</label>
+      <textarea id="txtImportCode" class="form-ctrl" rows="2" placeholder="在此貼上之前的文字備份代碼..." style="font-size:11px;"></textarea>
+      <button class="btn-block" style="background:var(--brick); padding:10px; font-size:15px;" onclick="playClickSound(); commitTextImport()">📥 確認文字還原</button>
+    </div>
+  </div>
+</div>
+
+<div id="confirmModal" class="confirm-modal-backdrop">
+  <div class="confirm-modal-box">
+    <p id="confirmModalMsg"></p>
+    <div class="confirm-modal-btns">
+      <button class="confirm-btn-no" onclick="confirmModalNo()">取消</button>
+      <button class="confirm-btn-yes" onclick="confirmModalYes()">確定</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+let state = { bills: [], memos: [], trash: [], filterType: 'all', categories: {} };
+
+const defaultCategories = {
+  living: ["水費", "電費", "瓦斯費", "手機費", "網路費", "社區管理費", "信用卡帳單", "保險費", "勞健保", "學費", "停車費、月租費", "房貸", "車貸", "信貸", "其它款項"],
+  tax: ["地價稅", "牌照稅", "燃料費", "房屋稅", "綜合所得稅", "其他政府稅費"],
+  other: ["報名費", "罰鍰／罰單", "捐款", "其他費用"]
+};
+const catIcons = { living: '🏡', tax: '💰', other: '📬' };
+
+/* 細項關鍵字圖示對照 (找不到則用 💰) */
+const itemIconRules = [
+  [/水費/, '💧'], [/電費/, '⚡️'], [/瓦斯/, '🔥'], [/手機/, '📱'], [/網路/, '📶'],
+  [/管理費/, '🏢'], [/信用卡/, '💳'], [/保險/, '🛡️'], [/勞健保/, '🏥'], [/學費/, '🎓'],
+  [/停車|月租/, '🅿️'], [/房貸/, '🏠'], [/車貸/, '🚗'], [/信貸/, '💵'],
+  [/地價稅|房屋稅|牌照稅|燃料費|所得稅|稅/, '🧾'],
+  [/報名費/, '📝'], [/罰鍰|罰單/, '🚨'], [/捐款/, '❤️']
+];
+function getItemIcon(b) {
+  const name = b.name || '';
+  for (const [re, icon] of itemIconRules) { if (re.test(name)) return icon; }
+  return catIcons[b.cat] || '💰';
+}
+
+/* 100 則溫暖日常短語 */
+const warmQuotes = [
+  "今天也要照顧好自己喔。", "累了就休息一下吧，沒關係的。", "記得多喝杯溫水。", "慢慢來，一切都會順利的。",
+  "給自己一個大大的微笑吧。", "天氣不錯的話，去走走吹吹風。", "辛苦啦！今天的你也做得很棒。", "伸個懶腰，放鬆緊繃的肩膀。",
+  "煩心事就留給明天吧，今晚先好好睡。", "照顧好心情，比什麼都重要。", "允許自己有想耍廢的時候。", "吃點好吃的，犒賞一下自己。",
+  "深呼吸，把壓力吐出去。", "買杯喜歡的飲料，享受一下小確幸。", "先把眼前的小事做好就行了。", "停下腳步看看天空吧。",
+  "記得對自己溫柔一點。", "睡個好覺治百病。", "每一天都是新的開始。", "聽首喜歡的歌，轉換一下心情。",
+  "不要太逼自己，順其自然就好。", "你的努力，時間都看在眼裡。", "把房間稍微整理一下，心情也會清爽喔。", "隨便發個呆也是一種放鬆。",
+  "去抱抱毛小孩或喜歡的娃娃吧。", "不完美也很可愛。", "慢慢走，沿途的風景也很美。", "給家人或朋友發個訊息聊聊天。",
+  "洗個熱水澡，把疲憊洗掉。", "少看點螢幕，讓眼睛休息一下。", "相信自己，你已經做得很好了。", "肚子餓了就去吃點東西吧。",
+  "偶爾放空什麼都不想也很棒。", "找到屬於自己的步調就好。", "給自己一點鼓勵，你很厲害喔。", "不要在深夜做決定，先睡覺吧。",
+  "今天發生了什麼好玩的事嗎？", "留一點時間只給自己。", "別忘了照顧好自己的胃。", "把討厭的事情丟進垃圾桶。",
+  "換個角度想，也許會豁然開朗。", "穿上喜歡的衣服，心情也會變好。", "去曬曬太陽，補充一點能量。", "今天也要好好愛自己。",
+  "就算只是平凡的一天，也很珍貴。", "一切都會慢慢變好的。", "給自己一個擁抱吧。", "不要為了別人的眼光委屈自己。",
+  "喝碗熱湯暖暖身子。", "把腳步放慢一點也沒關係。", "開心最重要，其他都是其次。", "去吃那家一直想吃的店吧。",
+  "想哭的時候就好好哭一場。", "今天的你也閃閃發光喔。", "先愛自己，才能愛生活。", "做點讓自己開心的事吧。",
+  "別忘了每天誇獎自己一句。", "你的存在本身就是一件美好的事。", "睡前拉拉筋，會睡得更好喔。", "不要害怕犯錯，那都是經驗。",
+  "買束小花放在桌上吧。", "去附近的公園散散步。", "泡杯熱茶，享受一個人的時間。", "你的感受是最重要的。",
+  "勇敢說不，保護自己的能量。", "今天早點下班/休息吧。", "看點好笑的影片放鬆一下。", "不用急著趕路，休息一下再出發。",
+  "把煩惱寫下來，然後揉掉丟掉。", "保持一顆平常心。", "感受微風吹過的感覺。", "聽聽雨聲也很療癒喔。",
+  "你值得擁有所有美好的事物。", "今天也要平安喜樂。", "整理一下桌面，迎接好心情。", "去便利商店買個小零食吧。",
+  "你的笑容很有感染力喔。", "別把什麼事都往肩上扛。", "偶爾任性一下也沒關係。", "今天的雲朵長得可愛嗎？",
+  "去找一件能讓自己笑出來的小事。", "允許一切如其所是。", "吃飽睡好，人生沒煩惱。", "把專注力拉回自己身上。",
+  "去做那件你想了很久的小事。", "你已經夠努力了，休息一下吧。", "享受一頓不被打擾的晚餐。", "點個香氛蠟燭，讓房間充滿香氣。",
+  "今天也要溫柔地對待世界和自己。", "把複雜的事情簡單化。", "不開心的時候，就去睡覺。", "你的人生由你做主。",
+  "去看看海，或者看看樹。", "給疲憊的心放個假。", "相信直覺，跟著心走。", "你比想像中堅強多了。",
+  "記得跟自己說聲謝謝。", "每一口呼吸都是生命的禮物。", "今天有好好吃飯嗎？", "就算什麼都沒做，這一天也很棒。"
+];
+
+const dailyQuotes = [
+  "每一個不曾起舞的日子，都是對生命的辜負。",
+  "生活是一面鏡子，你對它笑，它就對你笑。",
+  "不要等待機會，而要創造機會。",
+  "每天進步一點點，就是成功的開始。",
+  "相信自己，你能作繭自縛，就能破繭成蝶。",
+  "心若向陽，無畏悲傷。",
+  "最美好的事，是看到某人的微笑。"
+];
+
+/* ════ 自訂確認彈窗 ════ */
+let _confirmCallback = null;
+function showConfirm(msg, cb) {
+  _confirmCallback = cb;
+  document.getElementById('confirmModalMsg').textContent = msg;
+  document.getElementById('confirmModal').classList.add('show');
+}
+function confirmModalYes() {
+  playClickSound();
+  document.getElementById('confirmModal').classList.remove('show');
+  const cb = _confirmCallback; _confirmCallback = null;
+  if (cb) cb();
+}
+function confirmModalNo() {
+  playClickSound();
+  document.getElementById('confirmModal').classList.remove('show');
+  _confirmCallback = null;
+}
+
+/* ════ 通知提醒機制 ════ */
+function requestNotifyPermission() {
+  try {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  } catch(e) {}
+}
+function notifyUser(title, body) {
+  try {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body, icon: '' });
+      return;
+    }
+  } catch(e) {}
+  showToast(title + (body ? '：' + body : ''));
+}
+
+/* ════ 自動將「初二／十六」作牙日提前一週寫入備忘錄 ════ */
+function autoInsertZuoyaMemos() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i = 0; i <= 60; i++) {
+    const d = new Date(today); d.setDate(d.getDate() + i);
+    const y = d.getFullYear(), m = d.getMonth() + 1, day = d.getDate();
+    const info = getLunarInfo(y, m, day);
+    if (info.dayName === '初二' || info.dayName === '十六') {
+      const eventDateStr = `${y}-${String(m).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      const reminderDate = new Date(d); reminderDate.setDate(reminderDate.getDate() - 7);
+      const ry = reminderDate.getFullYear(), rm = reminderDate.getMonth()+1, rd = reminderDate.getDate();
+      const reminderDateStr = `${ry}-${String(rm).padStart(2,'0')}-${String(rd).padStart(2,'0')}`;
+      const autoId = 'auto_zuoya_' + eventDateStr;
+      const alreadyExists = state.memos.some(mo => mo.id === autoId) || state.trash.some(t => t.type==='memo' && t.data && t.data.id === autoId);
+      if (!alreadyExists) {
+        state.memos.push({
+          id: autoId,
+          title: `作牙提醒：${m}月${day}日`,
+          date: reminderDateStr,
+          content: `農曆${info.monthName}${info.dayName}（國曆${m}/${day}）為作牙日，提前一週通知準備祭拜事宜。`
+        });
+      }
+    }
+  }
+}
+
+function checkSoonBillsAndNotify() {
+  const soon = state.bills.filter(b => !b.paid && daysLeft(b.due) >= 0 && daysLeft(b.due) <= 3);
+  const overdue = state.bills.filter(b => !b.paid && daysLeft(b.due) < 0);
+  if (overdue.length > 0) notifyUser('⚠️ 您有逾期帳單', `${overdue.length} 筆帳單已逾期，請盡快處理`);
+  else if (soon.length > 0) notifyUser('🔔 帳單即將到期', soon.map(b => b.name).join('、') + ' 即將到期');
+}
+
+let audioCtx = null;
+
+const chNums = ["","初一","初二","初三","初四","初五","初六","初七","初八","初九","初十","十一","十二","十三","十四","十五","十六","十七","十八","十九","二十","廿一","廿二","廿三","廿四","廿五","廿六","廿七","廿八","廿九","三十"];
+const lunarStarts = [
+  { date: '2025-11-20', name: '十月' },
+  { date: '2025-12-20', name: '十一月' },
+  { date: '2026-01-19', name: '十二月' },
+  { date: '2026-02-17', name: '正月' },
+  { date: '2026-03-18', name: '二月' },
+  { date: '2026-04-17', name: '三月' },
+  { date: '2026-05-16', name: '四月' },
+  { date: '2026-06-15', name: '五月' },
+  { date: '2026-07-14', name: '六月' },
+  { date: '2026-08-12', name: '七月' },
+  { date: '2026-09-11', name: '八月' },
+  { date: '2026-10-10', name: '九月' },
+  { date: '2026-11-09', name: '十月' },
+  { date: '2026-12-09', name: '十一月' },
+  { date: '2027-01-07', name: '十二月' },
+  { date: '2027-02-06', name: '正月' },
+  { date: '2027-03-08', name: '二月' },
+  { date: '2027-04-07', name: '三月' },
+  { date: '2027-05-06', name: '四月' },
+  { date: '2027-06-05', name: '五月' },
+  { date: '2027-07-04', name: '六月' },
+  { date: '2027-08-02', name: '七月' },
+  { date: '2027-09-01', name: '八月' },
+  { date: '2027-10-01', name: '九月' },
+  { date: '2027-10-31', name: '十月' },
+  { date: '2027-11-29', name: '十一月' },
+  { date: '2027-12-29', name: '十二月' }
+];
+
+/* 改用安全無時差解析方式 */
+function getLunarInfo(year, month, day) {
+  const target = new Date(year, month - 1, day, 0, 0, 0);
+  let matched = lunarStarts[0];
+  for (let i = 0; i < lunarStarts.length; i++) {
+    const [y, m, d] = lunarStarts[i].date.split('-');
+    const startDate = new Date(y, m - 1, d, 0, 0, 0);
+    if (target >= startDate) {
+      matched = lunarStarts[i];
+    } else {
+      break;
+    }
+  }
+  const [sy, sm, sd] = matched.date.split('-');
+  const startDay = new Date(sy, sm - 1, sd, 0, 0, 0);
+  const diffDays = Math.round((target - startDay) / (1000 * 60 * 60 * 24));
+  return { monthName: matched.name, dayName: chNums[diffDays + 1] || "初一" };
+}
+
+function updateHeaderDates() {
+  const now = new Date();
+  const y = now.getFullYear(); const m = now.getMonth() + 1; const d = now.getDate();
+  const weekdays = ["(日)", "(一)", "(二)", "(三)", "(四)", "(五)", "(六)"];
+  
+  document.getElementById('headerGregorian').textContent = `${y}年${String(m).padStart(2,'0')}月${String(d).padStart(2,'0')}日 ${weekdays[now.getDay()]}`;
+  
+  const info = getLunarInfo(y, m, d);
+  const lunarEl = document.getElementById('headerLunar');
+  lunarEl.textContent = `${info.monthName}${info.dayName}`;
+  const isSpecialRed = (info.dayName === '初一' || info.dayName === '十五');
+  lunarEl.classList.toggle('lunar-red', isSpecialRed);
+
+  const noteEl = document.getElementById('lunarNote');
+  const mStr = String(m).padStart(2,'0');
+  const dStr = String(d).padStart(2,'0');
+  
+  const gregorianHolidays = {
+    '01-01': '元旦', '02-28': '和平紀念日', '04-04': '兒童節', '04-05': '清明節', '05-01': '勞動節', '10-10': '國慶日'
+  };
+  const lunarHolidays = {
+    '正月初一': '春節', '正月十五': '元宵節', '五月初五': '端午節', '八月十五': '中秋節', '臘月三十': '除夕'
+  };
+  
+  let holidayName = gregorianHolidays[`${mStr}-${dStr}`] || lunarHolidays[`${info.monthName}${info.dayName}`];
+
+  if (info.dayName === '初二' || info.dayName === '十六') {
+    noteEl.textContent = `今日為${info.dayName}，民間習俗為「作牙」日`;
+    noteEl.className = 'lunar-note show zuoya';
+  } else if (holidayName) {
+    noteEl.textContent = `🎉 今日是 ${holidayName}！`;
+    noteEl.className = 'lunar-note show holiday';
+  } else {
+    const quote = dailyQuotes[d % dailyQuotes.length];
+    noteEl.textContent = `💡 ${quote}`;
+    noteEl.className = 'lunar-note show quote';
+  }
+
+  // 同步更新今日小管家卡片
+  renderTodayAssistant();
+}
+
+/* 自動偵測跨日更新日曆 */
+let currentDayRef = new Date().getDate();
+setInterval(() => {
+  let nowD = new Date().getDate();
+  if(nowD !== currentDayRef) {
+    currentDayRef = nowD;
+    updateHeaderDates();
+    autoInsertZuoyaMemos();
+    if (document.getElementById('calSheet').classList.contains('open')) renderCalendar();
+  }
+}, 60000);
+
+/* ════ 多層次音效引擎 (4 種音色) ════ */
+function initAudioEngine() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+document.addEventListener('touchstart', initAudioEngine, { once: false, passive: true });
+document.addEventListener('click', initAudioEngine, { once: false, passive: true });
+
+function playTone(freq, type, dur, vol) {
+  try {
+    initAudioEngine();
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    osc.start(); osc.stop(audioCtx.currentTime + dur);
+  } catch(e) {}
+}
+
+/* 波波聲：切換頁面 / 一般點擊 */
+function playClickSound() { playTone(680, 'sine', 0.06, 0.08); }
+
+/* 清脆和弦：確認成功 */
+function playSuccessSound() {
+  try {
+    initAudioEngine();
+    if (!audioCtx) return;
+    [523, 659, 784].forEach((f, i) => {
+      setTimeout(() => playTone(f, 'sine', 0.18, 0.09), i * 70);
+    });
+  } catch(e) {}
+}
+
+/* 低沉木魚聲：刪除 */
+function playDeleteSound() { playTone(180, 'triangle', 0.18, 0.12); }
+
+let touchStartX = 0; let touchStartY = 0; let activeSwipeNode = null;
+
+function handleTouchStart(e) {
+  touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY;
+  activeSwipeNode = e.currentTarget.closest('.swipe-container');
+}
+
+function handleTouchMove(e) {
+  if (!activeSwipeNode) return;
+  let currX = e.touches[0].clientX; let currY = e.touches[0].clientY;
+  let dX = currX - touchStartX; let dY = currY - touchStartY;
+  if (Math.abs(dX) > Math.abs(dY) && Math.abs(dX) > 25) {
+    if (dX < -40) {
+      document.querySelectorAll('.swipe-container').forEach(n => { if(n !== activeSwipeNode) n.classList.remove('swiped'); });
+      activeSwipeNode.classList.add('swiped');
+    } else if (dX > 40) {
+      activeSwipeNode.classList.remove('swiped');
+    }
+  }
+}
+
+function initSubCatOptions() {
+  if(!state.categories || !state.categories.living) state.categories = JSON.parse(JSON.stringify(defaultCategories));
+}
+
+function selectMainCat(cat) {
+  document.getElementById('formBillMainCat').value = cat;
+  document.querySelectorAll('#mainCatBtnRow .cat-select-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.cat === cat);
+  });
+  onMainCatChange();
+}
+
+function onMainCatChange() {
+  const mainVal = document.getElementById('formBillMainCat').value;
+  const subSel = document.getElementById('formBillSubCat');
+  subSel.innerHTML = '';
+  const placeholder = document.createElement('option');
+  placeholder.value = ''; placeholder.textContent = '-- 請選擇細項 ▼ --';
+  subSel.appendChild(placeholder);
+  const arr = state.categories[mainVal] || [];
+  arr.forEach(item => {
+    const opt = document.createElement('option'); opt.value = item; opt.textContent = item;
+    subSel.appendChild(opt);
+  });
+  subSel.value = '';
+}
+
+function onSubCatChange() { /* 細項選擇即為項目名稱，儲存時讀取 select 值 */ }
+
+function setBillFilter(type) {
+  state.filterType = type;
+  switchTab('unpaid');
+  document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-filter'));
+  if(type === 'soon') document.getElementById('card-soon').classList.add('active-filter');
+  else if(type === 'overdue') document.getElementById('card-over').classList.add('active-filter');
+  else {
+    document.getElementById('card-all-amt').classList.add('active-filter');
+    document.getElementById('card-all-count').classList.add('active-filter');
+  }
+  renderAll();
+}
+
+function loadData() {
+  const local = localStorage.getItem('bear_小管家_pro_data');
+  if (local) {
+    try {
+      state = JSON.parse(local);
+      if(!state.trash) state.trash = [];
+      if(!state.filterType) state.filterType = 'all';
+      initSubCatOptions();
+    } catch(e) { resetToDefault(); }
+  } else { resetToDefault(); }
+}
+
+function resetToDefault() {
+  state = {
+    bills: [],
+    memos: [],
+    trash: [], filterType: 'all', categories: JSON.parse(JSON.stringify(defaultCategories))
+  };
+  saveData();
+}
+
+function saveData() {
+  localStorage.setItem('bear_小管家_pro_data', JSON.stringify(state));
+  renderAll();
+  document.getElementById('txtBackupCode').value = JSON.stringify(state);
+}
+
+function compressAndGetBase64(file, callback) {
+  if (!file) return callback('');
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      let w = img.width; let h = img.height; const max_size = 600;
+      if (w > h) { if (w > max_size) { h *= max_size / w; w = max_size; } }
+      else { if (h > max_size) { w *= max_size / h; h = max_size; } }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.65));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function daysLeft(dueStr) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const due = new Date(dueStr); due.setHours(0,0,0,0);
+  return Math.round((due - today) / 86400000);
+}
+function fmtDate(str) {
+  if(!str) return ''; const [y, m, d] = str.split('-');
+  return `${y}年${parseInt(m)}月${parseInt(d)}日`;
+}
+function fmtAmt(n) { return Number(n || 0).toLocaleString('zh-TW'); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function showToast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+let currentTab = 'unpaid';
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.list-container').forEach(c => c.classList.remove('active'));
+  const idx = tab === 'unpaid' ? 0 : tab === 'paid' ? 1 : 2;
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  document.getElementById(`tab-${tab}`).classList.add('active');
+}
+
+function openSheet(id) {
+  document.getElementById('backdrop').classList.add('show');
+  document.getElementById(id).classList.add('open');
+  if(id === 'settingSheet') loadCategoriesIntoInputs();
+  if(id === 'calSheet') renderCalendar();
+}
+function closeAllSheets() {
+  document.getElementById('backdrop').classList.remove('show');
+  document.querySelectorAll('.sheet').forEach(s => s.classList.remove('open'));
+}
+function closeDetailSheet() {
+  document.getElementById('detSheet').classList.remove('open');
+  if (!document.querySelector('.sheet.open:not(#detSheet)')) document.getElementById('backdrop').classList.remove('show');
+}
+
+function openAddSheet() {
+  if (currentTab === 'memo') {
+    document.getElementById('memoSheetTitle').textContent = "新增備忘錄";
+    document.getElementById('formMemoId').value = "";
+    document.getElementById('formMemoTitle').value = "";
+    document.getElementById('formMemoDate').value = new Date().toISOString().substring(0,10);
+    document.getElementById('formMemoContent').value = "";
+    document.getElementById('btnMemoDel').style.display = 'none';
+    openSheet('memoSheet');
+  } else {
+    document.getElementById('billSheetTitle').textContent = "新增帳單";
+    document.getElementById('formBillId').value = "";
+    document.getElementById('formBillAmt').value = "";
+    document.getElementById('formBillDue').value = new Date().toISOString().substring(0,10);
+    document.getElementById('formBillMethod').value = "未指定";
+    document.getElementById('formBillRmk').value = "";
+    document.getElementById('formBillImg').value = "";
+    document.getElementById('btnBillDel').style.display = 'none';
+    selectMainCat('living');
+    openSheet('billSheet');
+  }
+}
+
+function renderAll() {
+  renderStats();
+  renderLists();
+  renderPendingSummary();
+  renderTrash();
+  renderTodayAssistant();
+}
+
+function renderTodayAssistant() {
+  const now = new Date();
+  const localYYYYMMDD = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+
+  // 1. 帳單處理 (優先順序：逾期 > 今日到期 > 3天內到期 > 無待繳)
+  const unpaid = state.bills.filter(b => !b.paid);
+  let overdue = 0, dueToday = 0, dueSoon = 0;
+  unpaid.forEach(b => {
+    const d = daysLeft(b.due);
+    if (d < 0) overdue++;
+    else if (d === 0) dueToday++;
+    else if (d > 0 && d <= 3) dueSoon++;
+  });
+
+  let billText = "🎉 今天沒有待繳帳單";
+  if (overdue > 0) {
+    billText = `⚠️ 有 ${overdue} 筆已逾期帳單，請盡快處理！`;
+  } else if (dueToday > 0) {
+    billText = `🔔 有 ${dueToday} 筆今日到期帳單！`;
+  } else if (dueSoon > 0) {
+    billText = `💡 有 ${dueSoon} 筆帳單即將到期（3天內）`;
+  }
+
+  // 2. 待辦事項處理 (計算日期為今天的備忘錄)
+  const todayMemos = state.memos.filter(m => m.date === localYYYYMMDD);
+  const taskText = todayMemos.length > 0 
+    ? `📝 今天有 ${todayMemos.length} 件待辦事項` 
+    : `📝 今天沒有待辦事項`;
+
+  // 3. 每日一句處理 (根據當年度經過的天數決定索引)
+  const start = new Date(now.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((now - start) / 86400000);
+  const quote = warmQuotes[dayOfYear % warmQuotes.length];
+
+  document.getElementById('todayBill').textContent = billText;
+  document.getElementById('todayTask').textContent = taskText;
+  document.getElementById('todayQuote').textContent = `🌿 ${quote}`;
+}
+
+function renderStats() {
+  const unpaid = state.bills.filter(b => !b.paid);
+  let totalAmt = 0; let soonCount = 0; let overCount = 0;
+  unpaid.forEach(b => {
+    totalAmt += Number(b.amt || 0);
+    const days = daysLeft(b.due);
+    if (days < 0) overCount++; else if (days <= 3) soonCount++;
+  });
+  document.getElementById('statAmt').textContent = '$' + fmtAmt(totalAmt);
+  document.getElementById('statCount').textContent = unpaid.length + ' 筆';
+  document.getElementById('statSoon').textContent = soonCount + ' 筆';
+  document.getElementById('statOver').textContent = overCount + ' 筆';
+}
+
+function renderLists() {
+  const unpaidBox = document.getElementById('tab-unpaid');
+  let unpaidData = state.bills.filter(b => !b.paid).sort((a,b) => new Date(a.due) - new Date(b.due));
+
+  let filterBarHtml = '';
+  if (state.filterType === 'soon') {
+    unpaidData = unpaidData.filter(b => daysLeft(b.due) >= 0 && daysLeft(b.due) <= 3);
+    filterBarHtml = `<div class="filter-bar"><span>⚠️ 目前顯示：<b>即將到期</b> 項目</span><button class="filter-reset-btn" onclick="setBillFilter('all')">顯示全部</button></div>`;
+  } else if (state.filterType === 'overdue') {
+    unpaidData = unpaidData.filter(b => daysLeft(b.due) < 0);
+    filterBarHtml = `<div class="filter-bar"><span>⚠️ 目前顯示：<b>已逾期</b> 項目</span><button class="filter-reset-btn" onclick="setBillFilter('all')">顯示全部</button></div>`;
+  }
+
+  if(unpaidData.length === 0) {
+    unpaidBox.innerHTML = filterBarHtml + `<div style="text-align:center; padding:30px; color:var(--ink-soft);">☕ 沒有對應的待繳項目</div>`;
+  } else {
+    unpaidBox.innerHTML = filterBarHtml + unpaidData.map(b => {
+      const left = daysLeft(b.due);
+      let tagClass = 'tag-safe', tagText = `剩 ${left} 天`, bgClass = '';
+      if(left < 0) { tagClass = 'tag-danger'; tagText = `已逾期 ${Math.abs(left)} 天`; bgClass = 'item-overdue-bg'; }
+      else if(left <= 3) { tagClass = 'tag-warn'; tagText = `即將到期`; bgClass = 'item-soon-bg'; }
+      const icon = getItemIcon(b);
+      return `
+        <div class="swipe-container ${bgClass}">
+          <div class="swipe-back-layer" onclick="triggerDirectDelete('${b.id}', 'bill'); event.stopPropagation();">刪除</div>
+          <div class="swipe-front-layer" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" onclick="openBillDetail('${b.id}')">
+            <div class="item-left">
+              <input type="checkbox" class="item-cb" onclick="toggleBillPaidStatus('${b.id}', true); event.stopPropagation();">
+              <span class="cat-icon">${icon}</span>
+              <div class="item-info">
+                <div class="item-title">${esc(b.name)}</div>
+                <div class="item-desc">方式: ${esc(b.payMethod || '未指定')} ${b.rmk ? ' | ' + esc(b.rmk) : ''}</div>
+              </div>
+            </div>
+            <div class="item-right">
+              <div class="item-price">$${fmtAmt(b.amt)}</div>
+              <span class="item-tag ${tagClass}">${tagText}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  const paidBox = document.getElementById('tab-paid');
+  const paidData = state.bills.filter(b => b.paid).sort((a,b) => new Date(b.due) - new Date(a.due));
+  if(paidData.length === 0) {
+    paidBox.innerHTML = `<div style="text-align:center; padding:30px; color:var(--ink-soft);">目前無歷史繳費紀錄</div>`;
+  } else {
+    paidBox.innerHTML = paidData.map(b => {
+      const icon = getItemIcon(b);
+      return `
+      <div class="swipe-container">
+        <div class="swipe-back-layer" onclick="triggerDirectDelete('${b.id}', 'bill'); event.stopPropagation();">刪除</div>
+        <div class="swipe-front-layer" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" onclick="openBillDetail('${b.id}')">
+          <div class="item-left">
+            <input type="checkbox" class="item-cb" checked onclick="toggleBillPaidStatus('${b.id}', false); event.stopPropagation();">
+            <span class="cat-icon">${icon}</span>
+            <div class="item-info">
+              <div class="item-title" style="text-decoration:line-through; color:var(--ink-soft);">${esc(b.name)}</div>
+              <div class="item-desc">${esc(b.payDate || b.due)} / ${esc(b.payMethod)}</div>
+            </div>
+          </div>
+          <div class="item-right">
+            <div class="item-price" style="color:var(--sage);">$${fmtAmt(b.amt)}</div>
+            <span class="item-tag tag-safe">✓ 已完成</span>
+          </div>
+        </div>
+      </div>
+    `;
+    }).join('');
+  }
+
+  const memoBox = document.getElementById('tab-memo');
+  const memoData = state.memos.sort((a,b) => new Date(a.date) - new Date(b.date));
+  if(memoData.length === 0) {
+    memoBox.innerHTML = `<div style="text-align:center; padding:30px; color:var(--ink-soft);">目前沒有任何備忘記事</div>`;
+  } else {
+    memoBox.innerHTML = memoData.map(m => `
+      <div class="swipe-container">
+        <div class="swipe-back-layer" onclick="triggerDirectDelete('${m.id}', 'memo'); event.stopPropagation();">刪除</div>
+        <div class="swipe-front-layer" ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" onclick="openMemoEdit('${m.id}')">
+          <div class="item-left">
+            <span class="cat-icon">📌</span>
+            <div class="item-info">
+              <div class="item-title">${esc(m.title)}</div>
+              <div class="item-desc">${esc(m.content)}</div>
+            </div>
+          </div>
+          <div class="item-right">
+            <div style="font-size:14px; color:var(--lavender); font-weight:700;">${m.date.substring(5)}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function renderPendingSummary() {
+  const sumBox = document.getElementById('summaryList');
+  let items = [];
+  state.bills.filter(b => !b.paid).forEach(b => {
+    items.push({ id: b.id, type: 'bill', date: b.due, title: b.name, rmk: b.rmk || '未繳費', amtStr: `$${fmtAmt(b.amt)}`, icon: getItemIcon(b) });
+  });
+  state.memos.forEach(m => {
+    items.push({ id: m.id, type: 'memo', date: m.date, title: m.title, rmk: m.content || '重要備忘', amtStr: '備忘', icon: '📌' });
+  });
+  items.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+  if(items.length === 0) {
+    sumBox.innerHTML = `<div style="text-align:center; padding:15px; font-size:14px; color:var(--ink-soft);">✨ 目前無任何待辦事項</div>`;
+    document.getElementById('summaryHint').style.display = 'none';
+    return;
+  }
+  sumBox.innerHTML = items.map(item => `
+    <div class="summary-item" onclick="playClickSound(); handleSummaryClick('${item.id}', '${item.type}')">
+      <div class="sum-left">
+        <span style="font-size:18px;">${item.icon}</span>
+        <span class="sum-name">${esc(item.title)}</span>
+        <span class="sum-rmk">${esc(item.rmk)}</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:13px; font-weight:700; color:var(--ink-soft);">${item.amtStr}</span>
+        <span style="font-size:13px; color:var(--brick); font-weight:bold;">${item.date.substring(5)}</span>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('summaryHint').style.display = items.length > 3 ? 'inline' : 'none';
+}
+
+function checkSummaryScroll() {
+  const el = document.getElementById('summaryList');
+  if (el.scrollHeight - el.scrollTop <= el.clientHeight + 10) {
+    document.getElementById('summaryHint').style.display = 'none';
+  }
+}
+function handleSummaryClick(id, type) {
+  if(type === 'bill') openBillDetail(id); else openMemoEdit(id);
+}
+function toggleBillPaidStatus(id, isPaid) {
+  playClickSound();
+  const b = state.bills.find(x => String(x.id) === String(id));
+  if(b) {
+    b.paid = isPaid;
+    if (isPaid) {
+       b.payDate = new Date().toISOString().substring(0,10);
+       playSuccessSound();
+    }
+    saveData();
+  }
+}
+
+function triggerDirectDelete(id, type) {
+  playDeleteSound();
+  if(type === 'bill') {
+    const b = state.bills.find(x => String(x.id) === String(id));
+    if(b) {
+      state.trash.push({ type: 'bill', data: b, deletedAt: new Date().toLocaleTimeString() });
+      state.bills = state.bills.filter(x => String(x.id) !== String(id));
+      saveData(); showToast("已將帳單移入回收站");
+    }
+  } else {
+    const m = state.memos.find(x => String(x.id) === String(id));
+    if(m) {
+      state.trash.push({ type: 'memo', data: m, deletedAt: new Date().toLocaleTimeString() });
+      state.memos = state.memos.filter(x => String(x.id) !== String(id));
+      saveData(); showToast("已將備忘移入回收站");
+    }
+  }
+}
+
+function openBillDetail(id) {
+  const b = state.bills.find(x => String(x.id) === String(id));
+  if(!b) return;
+  document.getElementById('detBillId').value = b.id;
+  document.getElementById('detName').textContent = b.name;
+  document.getElementById('detAmt').textContent = '$' + fmtAmt(b.amt);
+  document.getElementById('detDue').textContent = fmtDate(b.due);
+  document.getElementById('detMethod').textContent = b.payMethod || '未指定';
+  document.getElementById('detStatus').textContent = b.paid ? '✓ 已繳費完成' : '⚠️ 尚未繳費';
+  document.getElementById('detStatus').className = b.paid ? 'detail-val tag-safe' : 'detail-val tag-danger';
+  document.getElementById('detRmk').textContent = b.rmk || '無';
+  document.getElementById('detImgRow').style.display = b.img ? 'block' : 'none';
+  if(b.img) document.getElementById('detImgView').src = b.img;
+
+  if(b.paid) {
+    document.getElementById('quickPayRow').style.display = 'none';
+    document.getElementById('receiptUploadRow').style.display = 'block';
+    document.getElementById('detReceiptRow').style.display = b.receipt ? 'block' : 'none';
+    if(b.receipt) document.getElementById('detReceiptView').src = b.receipt;
+  } else {
+    document.getElementById('quickPayRow').style.display = 'block';
+    document.getElementById('detQuickPayMethod').value = b.payMethod && b.payMethod !== '未指定' ? b.payMethod : '未指定';
+    document.getElementById('receiptUploadRow').style.display = 'none';
+    document.getElementById('detReceiptRow').style.display = 'none';
+  }
+  openSheet('detSheet');
+}
+
+function quickMarkPaid() {
+  const id = document.getElementById('detBillId').value;
+  const b = state.bills.find(x => String(x.id) === String(id));
+  if(!b) return;
+  const method = document.getElementById('detQuickPayMethod').value;
+  b.payMethod = method;
+  b.paid = true;
+  b.payDate = new Date().toISOString().substring(0,10);
+  saveData();
+  playSuccessSound();
+  showToast("✅ 已完成繳費，移至歷史紀錄！");
+  closeDetailSheet();
+  switchTab('unpaid');
+}
+
+function triggerEditFromDetail() {
+  const id = document.getElementById('detBillId').value;
+  const b = state.bills.find(x => String(x.id) === String(id));
+  if(!b) return;
+  closeDetailSheet();
+
+  document.getElementById('billSheetTitle').textContent = "修改帳單資料";
+  document.getElementById('formBillId').value = b.id;
+  selectMainCat(b.cat || 'living');
+  document.getElementById('formBillSubCat').value = b.name;
+  document.getElementById('formBillAmt').value = b.amt;
+  document.getElementById('formBillDue').value = b.due;
+  document.getElementById('formBillMethod').value = b.payMethod || '未指定';
+  document.getElementById('formBillRmk').value = b.rmk || '';
+  document.getElementById('formBillImg').value = "";
+  document.getElementById('btnBillDel').style.display = 'block';
+  openSheet('billSheet');
+}
+
+function commitBillDelete() {
+  const id = document.getElementById('formBillId').value;
+  if(!id) return;
+  showConfirm("確定要刪除這筆帳單記錄嗎？", () => {
+    const b = state.bills.find(x => String(x.id) === String(id));
+    if(b) {
+      playDeleteSound();
+      state.trash.push({ type: 'bill', data: b, deletedAt: new Date().toLocaleTimeString() });
+      state.bills = state.bills.filter(x => String(x.id) !== String(id));
+      saveData(); closeAllSheets(); showToast("已移至回收站，可至設定還原");
+    }
+  });
+}
+
+function openMemoEdit(id) {
+  const m = state.memos.find(x => String(x.id) === String(id));
+  if(!m) return;
+  document.getElementById('memoSheetTitle').textContent = "修改備忘錄";
+  document.getElementById('formMemoId').value = m.id;
+  document.getElementById('formMemoTitle').value = m.title;
+  document.getElementById('formMemoDate').value = m.date;
+  document.getElementById('formMemoContent').value = m.content || '';
+  document.getElementById('btnMemoDel').style.display = 'block';
+  openSheet('memoSheet');
+}
+
+function commitMemoDelete() {
+  const id = document.getElementById('formMemoId').value;
+  if(!id) return;
+  showConfirm("確定要刪除這筆備忘錄嗎？", () => {
+    const m = state.memos.find(x => String(x.id) === String(id));
+    if(m) {
+      playDeleteSound();
+      state.trash.push({ type: 'memo', data: m, deletedAt: new Date().toLocaleTimeString() });
+      state.memos = state.memos.filter(x => String(x.id) !== String(id));
+      saveData(); closeAllSheets(); showToast("已移至回收站，可至設定還原");
+    }
+  });
+}
+
+document.getElementById('formReceiptImg').addEventListener('change', function(e){
+  const file = e.target.files[0];
+  if(file) {
+    compressAndGetBase64(file, function(base64Str) {
+      const bId = document.getElementById('detBillId').value;
+      const b = state.bills.find(x => String(x.id) === String(bId));
+      if(b) { b.receipt = base64Str; saveData(); playSuccessSound(); showToast("✓ 收據已自動極速微縮儲存"); closeAllSheets(); }
+    });
+  }
+});
+
+function commitBillSave() {
+  const id = document.getElementById('formBillId').value;
+  const mainCat = document.getElementById('formBillMainCat').value;
+  const name = document.getElementById('formBillSubCat').value.trim();
+  const amt = parseInt(document.getElementById('formBillAmt').value) || 0;
+  const due = document.getElementById('formBillDue').value;
+  const payMethod = document.getElementById('formBillMethod').value;
+  const rmk = document.getElementById('formBillRmk').value.trim();
+  const fileInput = document.getElementById('formBillImg');
+
+  if(!name) { showToast("⚠️ 請選擇帳單細項"); return; }
+
+  const proceed = (imgB64) => {
+    if(id) {
+      const b = state.bills.find(x => String(x.id) === String(id));
+      if(b) {
+        b.name = name; b.cat = mainCat; b.amt = amt; b.due = due; b.payMethod = payMethod; b.rmk = rmk;
+        if(imgB64) b.img = imgB64;
+      }
+    } else {
+      state.bills.push({ id: 'b_' + Date.now(), name, cat: mainCat, amt, due, payMethod, rmk, paid: false, img: imgB64||'', receipt: '' });
+    }
+    saveData(); playSuccessSound(); closeAllSheets(); showToast("✓ 檔案更新存檔成功");
+  };
+
+  if(fileInput.files[0]) compressAndGetBase64(fileInput.files[0], (b64) => proceed(b64));
+  else proceed(null);
+}
+
+function commitMemoSave() {
+  const id = document.getElementById('formMemoId').value;
+  const title = document.getElementById('formMemoTitle').value.trim();
+  const date = document.getElementById('formMemoDate').value;
+  const content = document.getElementById('formMemoContent').value.trim();
+
+  if(!title) { showToast("⚠️ 請輸入標題"); return; }
+
+  if(id) {
+    const m = state.memos.find(x => String(x.id) === String(id));
+    if(m) { m.title = title; m.date = date; m.content = content; }
+  } else {
+    state.memos.push({ id: 'm_' + Date.now(), title, date, content });
+  }
+  saveData(); playSuccessSound(); closeAllSheets(); showToast("✓ 備忘更新存檔成功");
+}
+
+function initCalendarDropdowns() {
+  const now = new Date();
+  const currYear = now.getFullYear(); const currMonth = now.getMonth() + 1;
+  const ySel = document.getElementById('calYearSelect');
+  const mSel = document.getElementById('calMonthSelect');
+  ySel.innerHTML = ''; mSel.innerHTML = '';
+  for(let y=2024; y<=2033; y++) {
+    const opt = document.createElement('option'); opt.value = y; opt.textContent = y + " 年";
+    if(y === currYear) opt.selected = true;
+    ySel.appendChild(opt);
+  }
+  for(let m=1; m<=12; m++) {
+    const opt = document.createElement('option'); opt.value = m; opt.textContent = m + " 月";
+    if(m === currMonth) opt.selected = true;
+    mSel.appendChild(opt);
+  }
+}
+
+function renderCalendar() {
+  const year = parseInt(document.getElementById('calYearSelect').value);
+  const month = parseInt(document.getElementById('calMonthSelect').value);
+  const box = document.getElementById('calDaysBox');
+  box.innerHTML = '';
+
+  const firstDay = new Date(year, month - 1, 1).getDay();
+  const totalDays = new Date(year, month, 0).getDate();
+
+  for(let i=0; i<firstDay; i++) {
+    const emp = document.createElement('div'); emp.className = 'cal-day empty'; box.appendChild(emp);
+  }
+
+  const todayObj = new Date();
+  const tY = todayObj.getFullYear(); const tM = todayObj.getMonth() + 1; const tD = todayObj.getDate();
+
+  for(let day=1; day<=totalDays; day++) {
+    const dStr = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const cell = document.createElement('div'); cell.className = 'cal-day';
+
+    const info = getLunarInfo(year, month, day);
+    let lunarStr = info.dayName;
+    const lunarClass = (info.dayName === '初一' || info.dayName === '十五') ? 'cal-lunar lunar-red' : 'cal-lunar';
+
+    if(year === tY && month === tM && day === tD) {
+      cell.classList.add('today');
+    }
+
+    const hasBill = state.bills.some(b => b.due === dStr && !b.paid);
+    const hasMemo = state.memos.some(m => m.date === dStr);
+
+    let dotsHtml = '';
+    if(hasBill) dotsHtml += `<span class="dot dot-bill"></span>`;
+    if(hasMemo) dotsHtml += `<span class="dot dot-memo"></span>`;
+
+    cell.innerHTML = `<div class="cal-num">${day}</div><div class="${lunarClass}">${lunarStr}</div><div class="cal-dots">${dotsHtml}</div>`;
+    cell.onclick = () => { playClickSound(); showToast(`${year}/${month}/${day} 農曆 ${info.monthName}${info.dayName}`); };
+    box.appendChild(cell);
+  }
+}
+
+function loadCategoriesIntoInputs() {
+  document.getElementById('editCatLiving').value = state.categories.living.join(', ');
+  document.getElementById('editCatTax').value = state.categories.tax.join(', ');
+  document.getElementById('editCatOther').value = state.categories.other.join(', ');
+}
+
+function saveCustomCategories() {
+  playClickSound();
+  state.categories.living = document.getElementById('editCatLiving').value.split(',').map(s => s.trim()).filter(Boolean);
+  state.categories.tax = document.getElementById('editCatTax').value.split(',').map(s => s.trim()).filter(Boolean);
+  state.categories.other = document.getElementById('editCatOther').value.split(',').map(s => s.trim()).filter(Boolean);
+  saveData(); onMainCatChange(); playSuccessSound(); showToast("✓ 分類細項組已成功自訂同步！");
+}
+
+function renderTrash() {
+  const box = document.getElementById('trashListBox');
+  document.getElementById('trashCount').textContent = state.trash.length;
+  if(state.trash.length === 0) {
+    box.innerHTML = `<div style="color:var(--ink-soft); text-align:center; padding:12px;">回收站空空如也</div>`;
+    return;
+  }
+  box.innerHTML = state.trash.map((t, idx) => {
+    let title = t.type === 'bill' ? `[帳單] ${t.data.name}` : `[備忘] ${t.data.title}`;
+    return `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:180px; font-weight:bold;">${esc(title)}</span>
+        <div>
+          <button onclick="restoreTrash(${idx})" style="background:var(--sage); color:white; border:none; padding:2px 6px; border-radius:4px; font-size:11px; margin-right:4px;">還原</button>
+          <button onclick="deleteTrashPermanently(${idx})" style="background:var(--red); color:white; border:none; padding:2px 6px; border-radius:4px; font-size:11px;">永久殺</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function restoreTrash(idx) {
+  playClickSound();
+  const item = state.trash[idx];
+  if(item) {
+    if(item.type === 'bill') state.bills.push(item.data);
+    else state.memos.push(item.data);
+    state.trash.splice(idx, 1); saveData(); playSuccessSound(); showToast("✓ 項目已安全還原回首頁！");
+  }
+}
+
+function deleteTrashPermanently(idx) {
+  showConfirm("確定要永久粉碎此項目嗎？將無法復原。", () => {
+    playDeleteSound();
+    state.trash.splice(idx, 1); saveData(); showToast("已徹底灰飛煙滅");
+  });
+}
+
+function clearAllTrashPermanently() {
+  showConfirm("💥 斬草除根：確定要徹底清空垃圾桶回收站嗎？資料將永久消逝。", () => {
+    playDeleteSound();
+    state.trash = []; saveData(); showToast("回收站已完全淨空");
+  });
+}
+
+function copyBackupCode() {
+  const textarea = document.getElementById('txtBackupCode');
+  textarea.select(); textarea.setSelectionRange(0, 99999);
+  try { document.execCommand('copy'); showToast("📋 備份文字代碼已複製！快去貼在備忘錄中"); }
+  catch(e) { showToast("請直接全選框內文字手動複製"); }
+}
+
+function commitTextImport() {
+  const code = document.getElementById('txtImportCode').value.trim();
+  if(!code) return;
+  try {
+    const imp = JSON.parse(code);
+    if(imp.bills || imp.memos) {
+      state = { bills: imp.bills||[], memos: imp.memos||[], trash: imp.trash||[], categories: imp.categories||{}, filterType: 'all' };
+      initSubCatOptions();
+      saveData(); playSuccessSound(); showToast("📊 還原成功！"); document.getElementById('txtImportCode').value = ""; closeAllSheets();
+    } else showToast("錯誤的備份格式");
+  } catch(e) { showToast("代碼解析失敗，請確認是否貼完整。"); }
+}
+
+window.onload = function() {
+  initCalendarDropdowns();
+  loadData();
+  autoInsertZuoyaMemos();
+  saveData();
+  onMainCatChange();
+  renderAll();
+  updateHeaderDates();
+  requestNotifyPermission();
+  setTimeout(checkSoonBillsAndNotify, 1500);
+};
+</script>
+</body>
+</html>
