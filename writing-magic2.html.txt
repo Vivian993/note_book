@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 手機加入主畫面圖示 -->
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3063/3063821.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>寫作魔法冒險樂園</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #fff9f0; font-family: 'Noto Sans TC', sans-serif; }
+        .font-title { font-family: 'ZCOOL KuaiLe', cursive; }
+        .paper-card { background-color: white; border: 3px solid #1E3A5F; border-radius: 1rem; box-shadow: 4px 4px 0px #1E3A5F; }
+        .paper-btn { border: 2px solid #1E3A5F; border-radius: 0.75rem; box-shadow: 3px 3px 0px #1E3A5F; cursor: pointer; transition: all 0.1s; }
+        .paper-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #1E3A5F; }
+        .zone-content { display: none; }
+        .zone-content.active { display: block; }
+        .cover-page { background: linear-gradient(135deg, #FFFBEB 0%, #FFE4E1 100%); }
+        .custom-word-btn { position: relative; }
+        .delete-badge { position: absolute; top: -8px; right: -8px; background: #EC5B5B; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: none; align-items: center; justify-content: center; border: 2px solid #1E3A5F; cursor: pointer; }
+        .custom-word-btn:hover .delete-badge { display: flex; }
+    </style>
+</head>
+<body>
+
+    <!-- 可愛封面頁 -->
+    <div id="cover-page" class="fixed inset-0 z-50 flex flex-col items-center justify-center cover-page text-center p-6">
+        <div class="animate-bounce mb-8 text-8xl">🦄</div>
+        <h1 class="font-title text-5xl md:text-6xl text-coralRed mb-2 drop-shadow-md">寫作魔法<br>冒險樂園</h1>
+        <p class="text-lg md:text-xl font-bold text-skyBlue mb-10">把作文變成一場好玩的遊戲！</p>
+        <button onclick="enterApp()" class="bg-sunnyYellow text-deepNavy text-2xl font-bold px-10 py-4 rounded-full border-4 border-deepNavy shadow-[6px_6px_0px_#1E3A5F] hover:scale-105 transition-transform">
+            開始冒險吧！🚀
+        </button>
+    </div>
+
+    <!-- 主程式區域 -->
+    <div id="main-app" class="hidden h-screen flex flex-col">
+        <div class="bg-skyBlue p-4 flex justify-between items-center text-white md:hidden">
+            <h1 class="font-title text-xl">寫作魔法樂園</h1>
+            <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')"><i class="fa-solid fa-bars text-2xl"></i></button>
+        </div>
+        
+        <div class="flex-1 flex overflow-hidden">
+            <nav id="sidebar" class="fixed md:static inset-y-0 left-0 w-64 bg-creamWhite border-r-4 border-deepNavy transform -translate-x-full md:translate-x-0 transition-transform z-40 p-4 space-y-2 overflow-y-auto">
+                <button onclick="switchZone(1)" class="w-full text-left p-3 rounded-xl hover:bg-skyBlue hover:text-white font-bold"><i class="fa-solid fa-tree"></i> 魔法森林</button>
+                <button onclick="switchZone(5)" class="w-full text-left p-3 rounded-xl hover:bg-skyBlue hover:text-white font-bold"><i class="fa-solid fa-gem"></i> 成語寶石山</button>
+                <button onclick="switchZone(7)" class="w-full text-left p-3 rounded-xl hover:bg-skyBlue hover:text-white font-bold"><i class="fa-solid fa-box"></i> 萬用骨架</button>
+                <button onclick="resetAll()" class="w-full mt-10 text-red-500 text-sm font-bold p-2 text-center border-t-2">重置所有資料</button>
+            </nav>
+
+            <main id="content" class="flex-1 overflow-y-auto p-6">
+                <div id="zone-1" class="zone-content active">
+                    <h2 class="font-title text-3xl mb-4 text-grassGreen">一、魔法森林 (五感)</h2>
+                    <div id="forest-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        let appData = JSON.parse(localStorage.getItem('myWritingData')) || { forest: [{title: '視覺', words: ['閃閃發光', '五彩斑斕'], custom: []}], idioms: [] };
+
+        function enterApp() {
+            document.getElementById('cover-page').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            renderForest();
+        }
+
+        function renderForest() {
+            const container = document.getElementById('forest-grid');
+            container.innerHTML = '';
+            appData.forest.forEach((item, idx) => {
+                let wordsHTML = item.words.map(w => `<button class="paper-btn m-1 px-3 py-1 bg-white">${w}</button>`).join('');
+                let customHTML = item.custom.map((w, i) => `
+                    <div class="inline-block m-1 custom-word-btn">
+                        <button class="paper-btn px-3 py-1 bg-sunnyYellow">${w}</button>
+                        <div class="delete-badge" onclick="deleteWord(${idx}, ${i})">X</div>
+                    </div>`).join('');
+                container.innerHTML += `<div class="paper-card p-4"><h3>${item.title}</h3>${wordsHTML}${customHTML}
+                    <button onclick="addWord(${idx})" class="paper-btn bg-gray-200 px-3 py-1">+ 新增詞彙</button></div>`;
+            });
+        }
+
+        function addWord(idx) {
+            const word = prompt("請輸入新詞彙：");
+            if(word) { appData.forest[idx].custom.push(word); save(); renderForest(); }
+        }
+
+        function deleteWord(catIdx, wordIdx) {
+            appData.forest[catIdx].custom.splice(wordIdx, 1);
+            save(); renderForest();
+        }
+
+        function switchZone(id) {
+            document.querySelectorAll('.zone-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('zone-' + id)?.classList.add('active');
+        }
+
+        function save() { localStorage.setItem('myWritingData', JSON.stringify(appData)); }
+        function resetAll() { if(confirm("確定重置所有資料嗎？")) { localStorage.clear(); location.reload(); } }
+    </script>
+</body>
+</html>
+
