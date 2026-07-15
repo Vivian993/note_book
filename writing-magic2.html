@@ -3,105 +3,645 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- 手機加入主畫面圖示 -->
+    <!-- 1. 手機主畫面圖示：可愛獨角獸 -->
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3063/3063821.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>寫作魔法冒險樂園</title>
+    <title>寫作魔法冒險樂園 Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #fff9f0; font-family: 'Noto Sans TC', sans-serif; }
+        body { background-color: #f1f5f9; }
         .font-title { font-family: 'ZCOOL KuaiLe', cursive; }
-        .paper-card { background-color: white; border: 3px solid #1E3A5F; border-radius: 1rem; box-shadow: 4px 4px 0px #1E3A5F; }
-        .paper-btn { border: 2px solid #1E3A5F; border-radius: 0.75rem; box-shadow: 3px 3px 0px #1E3A5F; cursor: pointer; transition: all 0.1s; }
-        .paper-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #1E3A5F; }
-        .zone-content { display: none; }
-        .zone-content.active { display: block; }
-        .cover-page { background: linear-gradient(135deg, #FFFBEB 0%, #FFE4E1 100%); }
-        .custom-word-btn { position: relative; }
-        .delete-badge { position: absolute; top: -8px; right: -8px; background: #EC5B5B; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: none; align-items: center; justify-content: center; border: 2px solid #1E3A5F; cursor: pointer; }
-        .custom-word-btn:hover .delete-badge { display: flex; }
+        /* 封面背景圖設定 */
+        .cover-page { 
+            background: linear-gradient(180deg, #FFF9F0 0%, #E0F2FE 100%); 
+        }
+        .paper-card { background-color: white; border: 4px solid #1E3A5F; border-radius: 1.5rem; box-shadow: 6px 6px 0px #1E3A5F; }
     </style>
 </head>
-<body>
+<body class="font-body text-deepNavy">
 
-    <!-- 可愛封面頁 -->
+    <!-- 封面頁：加入了一張可愛的魔法城堡插畫 -->
     <div id="cover-page" class="fixed inset-0 z-50 flex flex-col items-center justify-center cover-page text-center p-6">
-        <div class="animate-bounce mb-8 text-8xl">🦄</div>
-        <h1 class="font-title text-5xl md:text-6xl text-coralRed mb-2 drop-shadow-md">寫作魔法<br>冒險樂園</h1>
-        <p class="text-lg md:text-xl font-bold text-skyBlue mb-10">把作文變成一場好玩的遊戲！</p>
+        <!-- 2. 封面插畫 -->
+        <img src="https://cdn-icons-png.flaticon.com/512/8627/8627341.png" alt="魔法城堡" class="w-48 h-48 mb-6 animate-float drop-shadow-lg">
+        
+        <h1 class="font-title text-5xl md:text-6xl text-coralRed mb-2">寫作魔法<br>冒險樂園</h1>
+        <p class="text-xl font-bold text-skyBlue mb-10">把作文變成一場好玩的遊戲！</p>
+        
         <button onclick="enterApp()" class="bg-sunnyYellow text-deepNavy text-2xl font-bold px-10 py-4 rounded-full border-4 border-deepNavy shadow-[6px_6px_0px_#1E3A5F] hover:scale-105 transition-transform">
             開始冒險吧！🚀
         </button>
     </div>
 
-    <!-- 主程式區域 -->
-    <div id="main-app" class="hidden h-screen flex flex-col">
-        <div class="bg-skyBlue p-4 flex justify-between items-center text-white md:hidden">
-            <h1 class="font-title text-xl">寫作魔法樂園</h1>
-            <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')"><i class="fa-solid fa-bars text-2xl"></i></button>
-        </div>
+    <!<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>寫作魔法冒險樂園 Pro</title>
+    <!-- 引入字體與圖示 -->
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        skyBlue: '#56C1FF',
+                        coralRed: '#EC5B5B',
+                        sunnyYellow: '#F5B500',
+                        periwinkle: '#8DA4E1',
+                        grassGreen: '#50A262',
+                        creamWhite: '#FFFBEB',
+                        deepNavy: '#1E3A5F',
+                    },
+                    fontFamily: {
+                        'title': ['"ZCOOL KuaiLe"', 'cursive', 'sans-serif'],
+                        'body': ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'paper': '4px 4px 0px #1E3A5F',
+                        'paper-md': '6px 6px 0px #1E3A5F',
+                        'paper-hover': '2px 2px 0px #1E3A5F',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f1f5f9; background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        <div class="flex-1 flex overflow-hidden">
-            <nav id="sidebar" class="fixed md:static inset-y-0 left-0 w-64 bg-creamWhite border-r-4 border-deepNavy transform -translate-x-full md:translate-x-0 transition-transform z-40 p-4 space-y-2 overflow-y-auto">
-                <button onclick="switchZone(1)" class="w-full text-left p-3 rounded-xl hover:bg-skyBlue hover:text-white font-bold"><i class="fa-solid fa-tree"></i> 魔法森林</button>
-                <button onclick="switchZone(5)" class="w-full text-left p-3 rounded-xl hover:bg-skyBlue hover:text-white font-bold"><i class="fa-solid fa-gem"></i> 成語寶石山</button>
-                <button onclick="switchZone(7)" class="w-full text-left p-3 rounded-xl hover:bg-skyBlue hover:text-white font-bold"><i class="fa-solid fa-box"></i> 萬用骨架</button>
-                <button onclick="resetAll()" class="w-full mt-10 text-red-500 text-sm font-bold p-2 text-center border-t-2">重置所有資料</button>
-            </nav>
+        .paper-card { background-color: white; border: 3px solid #1E3A5F; border-radius: 1rem; box-shadow: var(--tw-shadow-color, 4px 4px 0px #1E3A5F); transition: all 0.2s ease-in-out; }
+        @media (min-width: 768px) { .paper-card { border-width: 4px; border-radius: 1.5rem; box-shadow: 6px 6px 0px #1E3A5F; } }
+        
+        .paper-btn { border: 2px solid #1E3A5F; border-radius: 0.75rem; box-shadow: 3px 3px 0px #1E3A5F; cursor: pointer; transition: all 0.1s ease-in-out; font-weight: 700; }
+        @media (min-width: 768px) { .paper-btn { border-width: 3px; border-radius: 1rem; box-shadow: 4px 4px 0px #1E3A5F; } }
+        .paper-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #1E3A5F !important; }
+        
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .animate-pop { animation: pop 0.3s ease-in-out; }
 
-            <main id="content" class="flex-1 overflow-y-auto p-6">
-                <div id="zone-1" class="zone-content active">
-                    <h2 class="font-title text-3xl mb-4 text-grassGreen">一、魔法森林 (五感)</h2>
-                    <div id="forest-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        .washi-tape { position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(-3deg); width: 80px; height: 20px; background-color: rgba(236, 91, 91, 0.8); z-index: 10; }
+        @media (min-width: 768px) { .washi-tape { top: -15px; width: 120px; height: 30px; } }
+
+        .zone-content { display: none; animation: fadeIn 0.4s ease-out; }
+        .zone-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Delete badge for custom words */
+        .custom-word-btn { position: relative; }
+        .delete-badge { position: absolute; top: -8px; right: -8px; background: #EC5B5B; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: none; align-items: center; justify-content: center; border: 2px solid #1E3A5F; cursor: pointer; }
+        .custom-word-btn:hover .delete-badge { display: flex; }
+    </style>
+</head>
+<body class="font-body text-deepNavy h-screen flex flex-col md:flex-row overflow-hidden">
+
+    <!-- 手機版頂部導覽列 -->
+    <header class="md:hidden bg-skyBlue text-white p-4 flex justify-between items-center z-30 border-b-4 border-deepNavy flex-shrink-0">
+        <h1 class="font-title text-2xl tracking-wider flex items-center gap-2">
+            <i class="fa-solid fa-map-location-dot animate-float"></i> 寫作魔法樂園
+        </h1>
+        <button onclick="toggleMenu()" class="text-3xl focus:outline-none hover:text-sunnyYellow transition-colors"><i class="fa-solid fa-bars"></i></button>
+    </header>
+
+    <!-- 佈局容器 -->
+    <div class="flex-1 flex overflow-hidden relative">
+        <div id="mobile-overlay" onclick="toggleMenu()" class="absolute inset-0 bg-deepNavy bg-opacity-50 z-40 hidden md:hidden transition-opacity"></div>
+
+        <!-- 側邊導覽列 -->
+        <nav id="sidebar" class="absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 z-50 w-72 bg-creamWhite border-r-4 border-deepNavy h-full flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out shadow-[4px_0_10px_rgba(0,0,0,0.1)]">
+            <button onclick="toggleMenu()" class="md:hidden absolute top-4 right-4 text-3xl text-white z-50 hover:text-sunnyYellow"><i class="fa-solid fa-circle-xmark"></i></button>
+            
+            <div class="p-6 border-b-4 border-deepNavy bg-skyBlue text-white text-center pt-12 md:pt-6 relative">
+                <i class="fa-solid fa-map-location-dot text-4xl mb-2 animate-float"></i>
+                <h1 class="font-title text-3xl tracking-wider hidden md:block">寫作魔法<br>冒險樂園</h1>
+                <h1 class="font-title text-2xl tracking-wider md:hidden">冒險地圖</h1>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto hide-scrollbar p-4 space-y-2 md:space-y-3" id="nav-menu"></div>
+            
+            <div class="p-4 border-t-4 border-deepNavy bg-sunnyYellow text-center font-bold text-sm md:text-base flex justify-between items-center">
+                <span><i class="fa-solid fa-save"></i> 自動存檔中</span>
+                <button onclick="resetAllData()" class="text-xs bg-white px-2 py-1 border-2 border-deepNavy rounded hover:bg-coralRed hover:text-white transition" title="恢復原廠設定"><i class="fa-solid fa-rotate-right"></i> 重置</button>
+            </div>
+        </nav>
+
+        <!-- 主要內容區 -->
+        <main class="flex-1 h-full overflow-y-auto p-4 md:p-8 relative" id="main-content">
+            
+            <!-- Zone 0: Welcome -->
+            <div id="zone-0" class="zone-content active h-full flex flex-col items-center justify-center text-center pb-20">
+                <div class="animate-float mb-4 md:mb-8 text-6xl md:text-8xl">🏰</div>
+                <h2 class="font-title text-4xl md:text-6xl text-coralRed mb-4 shadow-sm px-2">寫作魔法樂園 Pro</h2>
+                <p class="text-lg md:text-2xl font-bold bg-white px-4 md:px-6 py-2 md:py-3 rounded-full border-2 md:border-4 border-deepNavy shadow-paper mt-2 max-w-xs md:max-w-none mb-4">
+                    全自動存檔，專屬你的寫作資料庫！
+                </p>
+            </div>
+
+            <!-- Zone 1: 五感 -->
+            <div id="zone-1" class="zone-content max-w-6xl mx-auto pb-24">
+                <div class="text-center mb-8 md:mb-10 relative mt-4">
+                    <div class="washi-tape" style="background-color: var(--grassGreen);"></div>
+                    <h2 class="font-title text-3xl md:text-5xl text-grassGreen bg-white inline-block px-6 md:px-10 py-3 md:py-4 border-4 border-deepNavy rounded-2xl shadow-paper">一、魔法森林 (五感)</h2>
+                    <p class="text-sm md:text-xl mt-4 font-bold text-gray-600">點擊收集寶石，也可以點「＋加詞」存入你的專屬詞彙！</p>
                 </div>
-            </main>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6" id="forest-grid"></div>
+            </div>
+
+            <!-- Zone 2: 放大鏡 -->
+            <div id="zone-2" class="zone-content max-w-4xl mx-auto pb-24">
+                <div class="text-center mb-8 md:mb-10 relative mt-4">
+                    <div class="washi-tape" style="background-color: var(--skyBlue);"></div>
+                    <h2 class="font-title text-3xl md:text-5xl text-skyBlue bg-white inline-block px-6 md:px-10 py-3 md:py-4 border-4 border-deepNavy rounded-2xl shadow-paper">二、作文放大鏡</h2>
+                </div>
+                <div class="paper-card p-4 md:p-8 bg-creamWhite text-center">
+                    <div class="text-xl md:text-3xl mb-4 md:mb-6 font-bold">流水帳：<span class="text-gray-400 line-through">公園裡有很多花。</span></div>
+                    <div class="flex flex-col md:flex-row justify-center gap-3 mb-6 md:mb-8">
+                        <button onclick="setZoom(1)" class="paper-btn bg-white px-4 md:px-6 py-2 md:py-3 text-sm md:text-xl"><i class="fa-solid fa-search"></i> 1級 (顏色/形狀)</button>
+                        <button onclick="setZoom(2)" class="paper-btn bg-white px-4 md:px-6 py-2 md:py-3 text-sm md:text-xl"><i class="fa-solid fa-search-plus"></i> 2級 (加動作)</button>
+                        <button onclick="setZoom(3)" class="paper-btn bg-sunnyYellow px-4 md:px-6 py-2 md:py-3 text-sm md:text-xl"><i class="fa-solid fa-star"></i> 3級 (加想像/比喻)</button>
+                    </div>
+                    <div id="zoom-result" class="text-lg md:text-2xl p-4 md:p-6 bg-white border-2 md:border-4 border-dashed border-skyBlue rounded-2xl min-h-[100px] flex items-center justify-center font-bold transition-all text-left md:text-center">請點擊上方的放大鏡按鈕！</div>
+                </div>
+            </div>
+
+            <!-- Zone 3: 攝影機 -->
+            <div id="zone-3" class="zone-content max-w-4xl mx-auto pb-24">
+                <div class="text-center mb-8 md:mb-10 relative mt-4">
+                    <div class="washi-tape" style="background-color: var(--coralRed);"></div>
+                    <h2 class="font-title text-3xl md:text-5xl text-coralRed bg-white inline-block px-6 md:px-10 py-3 md:py-4 border-4 border-deepNavy rounded-2xl shadow-paper">三、電影攝影機</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                    <div class="paper-card p-5 md:p-6 bg-[#FFEAEA]">
+                        <div class="text-4xl text-center mb-2">⏩</div><h3 class="font-title text-xl md:text-2xl text-center mb-1">快轉模式</h3><p class="text-xs md:text-sm font-bold text-gray-500 text-center mb-3">緊張、急促、動作快</p>
+                        <div class="bg-white p-3 rounded-xl border-2 border-deepNavy text-sm md:text-base">他衝向門口，猛地一轉，撞開門，飛快地跑出去。</div>
+                    </div>
+                    <div class="paper-card p-5 md:p-6 bg-[#EAFFFF]">
+                        <div class="text-4xl text-center mb-2">🐢</div><h3 class="font-title text-xl md:text-2xl text-center mb-1">慢動作模式</h3><p class="text-xs md:text-sm font-bold text-gray-500 text-center mb-3">感動、關鍵、期待</p>
+                        <div class="bg-white p-3 rounded-xl border-2 border-deepNavy text-sm md:text-base">他緩緩蹲下身，屏住呼吸，手指輕撥開草叢，看見了光芒。</div>
+                    </div>
+                    <div class="paper-card p-5 md:p-6 bg-[#FFF4EA]">
+                        <div class="text-4xl text-center mb-2">🔍</div><h3 class="font-title text-xl md:text-2xl text-center mb-1">特寫鏡頭</h3><p class="text-xs md:text-sm font-bold text-gray-500 text-center mb-3">強調情緒、放大細節</p>
+                        <div class="bg-white p-3 rounded-xl border-2 border-deepNavy text-sm md:text-base">他不自覺握緊拳頭，指關節因用力而發白，喉嚨微微吞嚥。</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone 4: 情緒 -->
+            <div id="zone-4" class="zone-content max-w-6xl mx-auto pb-24">
+                 <div class="text-center mb-8 md:mb-10 relative mt-4">
+                    <div class="washi-tape" style="background-color: var(--periwinkle);"></div>
+                    <h2 class="font-title text-3xl md:text-5xl text-periwinkle bg-white inline-block px-6 md:px-10 py-3 md:py-4 border-4 border-deepNavy rounded-2xl shadow-paper">四、情緒魔法屋</h2>
+                </div>
+                <div class="flex flex-wrap justify-center gap-2 md:gap-4 mb-6 md:mb-8" id="emotion-tabs"></div>
+                <div id="emotion-display" class="paper-card p-4 md:p-8 bg-white hidden">
+                    <h3 id="emo-title" class="font-title text-2xl md:text-4xl mb-4 md:mb-6 text-center border-b-2 md:border-b-4 border-dashed pb-2 md:pb-4"></h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4" id="emo-content"></div>
+                </div>
+            </div>
+
+            <!-- Zone 5: 成語 -->
+            <div id="zone-5" class="zone-content max-w-6xl mx-auto pb-24">
+                 <div class="text-center mb-8 md:mb-10 relative mt-4">
+                    <h2 class="font-title text-3xl md:text-5xl text-sunnyYellow bg-white inline-block px-6 md:px-10 py-3 md:py-4 border-4 border-deepNavy rounded-2xl shadow-paper">五、成語寶石山</h2>
+                </div>
+                <div class="space-y-4 md:space-y-6" id="idiom-container"></div>
+            </div>
+
+            <!-- Zone 6: 美句 -->
+            <div id="zone-6" class="zone-content max-w-6xl mx-auto pb-24">
+                 <div class="text-center mb-8 md:mb-10 relative mt-4">
+                    <h2 class="font-title text-3xl md:text-5xl text-grassGreen bg-white inline-block px-6 md:px-10 py-3 md:py-4 border-4 border-deepNavy rounded-2xl shadow-paper">六、優美詞句花園</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6" id="garden-container"></div>
+            </div>
+
+            <!-- Zone 7: 作文百寶箱 (不同體裁切換) -->
+            <div id="zone-7" class="zone-content max-w-6xl mx-auto pb-24">
+                <div class="text-center mb-8 md:mb-10 relative mt-4">
+                    <h2 class="font-title text-3xl md:text-5xl text-coralRed bg-white inline-block px-6 md:px-10 py-3 md:py-4 border-4 border-deepNavy rounded-2xl shadow-paper">七、萬用作文骨架</h2>
+                    <p class="text-sm md:text-xl mt-4 font-bold text-gray-600">請先選擇你要寫什麼類型的作文？</p>
+                </div>
+                
+                <!-- 體裁切換器 -->
+                <div class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8" id="essay-type-tabs">
+                    <button onclick="switchEssayType('記事')" class="essay-tab paper-btn bg-sunnyYellow px-6 py-2 text-xl shadow-paper" data-type="記事"><i class="fa-solid fa-person-running"></i> 記事 (寫事情)</button>
+                    <button onclick="switchEssayType('寫景')" class="essay-tab paper-btn bg-white px-6 py-2 text-xl shadow-paper opacity-70" data-type="寫景"><i class="fa-solid fa-mountain-sun"></i> 寫景 (寫風景/遊記)</button>
+                    <button onclick="switchEssayType('寫人')" class="essay-tab paper-btn bg-white px-6 py-2 text-xl shadow-paper opacity-70" data-type="寫人"><i class="fa-solid fa-user"></i> 寫人 (寫人物)</button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="sentence-container">
+                    <!-- JS 動態生成骨架 -->
+                </div>
+            </div>
+
+            <!-- Zone 8: 醫院 -->
+            <div id="zone-8" class="zone-content max-w-4xl mx-auto pb-24">
+                <div class="text-center mb-8 md:mb-10 relative mt-4">
+                    <h2 class="font-title text-3xl md:text-5xl text-skyBlue bg-white inline-block px-6 md:px-10 py-3 md:py-4 border-4 border-deepNavy rounded-2xl shadow-paper">八、作文健檢醫院</h2>
+                </div>
+                <div class="flex flex-col md:flex-row gap-4 md:gap-8 items-start">
+                    <div class="w-full md:w-1/3 text-center paper-card p-4 md:p-6 bg-creamWhite order-1 md:order-2 md:sticky top-4">
+                        <div class="text-5xl md:text-6xl mb-2 md:mb-4">🩺</div>
+                        <h3 class="font-bold text-xl md:text-2xl mb-1 md:mb-2">健康指數</h3>
+                        <div class="text-4xl md:text-5xl font-title text-coralRed mb-3 md:mb-4" id="health-score">0/12</div>
+                        <div id="health-diagnosis" class="text-base md:text-lg font-bold text-deepNavy bg-white p-2 md:p-3 border-2 border-deepNavy rounded-xl">請開始檢查...</div>
+                    </div>
+                    <div class="flex-1 space-y-2 md:space-y-3 order-2 md:order-1 w-full paper-card p-4 md:p-6 bg-white" id="checklist-container"></div>
+                </div>
+            </div>
+
+            <!-- Zone 9: 升級 -->
+            <div id="zone-9" class="zone-content max-w-4xl mx-auto pb-24">
+                <div class="text-center mb-8 md:mb-10 relative mt-4">
+                    <h2 class="font-title text-3xl md:text-5xl text-sunnyYellow bg-white inline-block px-6 md:px-10 py-3 md:py-4 border-4 border-deepNavy rounded-2xl shadow-paper">九、句子進化工廠</h2>
+                </div>
+                <div class="paper-card p-4 md:p-8 bg-white text-center">
+                    <div class="flex justify-center gap-1 md:gap-2 mb-4 md:mb-6 text-3xl md:text-4xl cursor-pointer" id="star-rating">
+                        <i class="fa-solid fa-star text-gray-300 hover:text-sunnyYellow" onclick="setUpgrade(1)"></i>
+                        <i class="fa-solid fa-star text-gray-300 hover:text-sunnyYellow" onclick="setUpgrade(2)"></i>
+                        <i class="fa-solid fa-star text-gray-300 hover:text-sunnyYellow" onclick="setUpgrade(3)"></i>
+                        <i class="fa-solid fa-star text-gray-300 hover:text-sunnyYellow" onclick="setUpgrade(4)"></i>
+                        <i class="fa-solid fa-star text-gray-300 hover:text-sunnyYellow" onclick="setUpgrade(5)"></i>
+                    </div>
+                    <div id="upgrade-result" class="text-lg md:text-2xl font-bold p-4 md:p-8 bg-creamWhite border-2 md:border-4 border-dashed border-sunnyYellow rounded-2xl min-h-[120px] md:min-h-[150px] flex items-center justify-center text-left md:text-center">請點擊星星啟動升級工廠！</div>
+                </div>
+            </div>
+            
+        </main>
+    </div>
+
+    <!-- 浮動背包按鈕 -->
+    <button onclick="toggleBackpack()" class="fixed bottom-6 right-6 md:bottom-8 md:right-8 w-16 h-16 md:w-20 md:h-20 bg-coralRed text-white rounded-full border-3 md:border-4 border-deepNavy shadow-paper text-2xl md:text-3xl flex items-center justify-center hover:scale-105 transition-transform z-50">
+        <i class="fa-solid fa-backpack"></i><span id="backpack-count" class="absolute -top-1 -right-1 md:-top-2 md:-right-2 bg-sunnyYellow text-deepNavy text-xs md:text-sm font-bold w-6 h-6 md:w-8 md:h-8 rounded-full border-2 border-deepNavy flex items-center justify-center">0</span>
+    </button>
+
+    <!-- 背包面板 -->
+    <div id="backpack-panel" class="fixed inset-y-0 right-0 w-full md:w-80 bg-white md:border-l-4 border-deepNavy shadow-[-10px_0_20px_rgba(0,0,0,0.2)] transform translate-x-full transition-transform duration-300 z-50 flex flex-col">
+        <div class="p-4 md:p-6 bg-coralRed border-b-4 border-deepNavy text-white flex justify-between items-center">
+            <h3 class="font-title text-xl md:text-2xl"><i class="fa-solid fa-backpack"></i> 我的魔法背包</h3>
+            <button onclick="toggleBackpack()" class="text-2xl hover:text-sunnyYellow"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-4 flex-1 overflow-y-auto" id="backpack-items"></div>
+        <div class="p-4 border-t-4 border-deepNavy bg-creamWhite pb-8 md:pb-4">
+            <button onclick="copyBackpack()" class="w-full paper-btn bg-skyBlue text-white py-3 text-lg md:text-xl"><i class="fa-solid fa-copy"></i> 一鍵複製全部</button>
+            <button onclick="clearBackpack()" class="w-full text-gray-500 font-bold py-2 mt-2 hover:text-coralRed">清空背包</button>
         </div>
     </div>
 
+    <!-- 吐司通知 -->
+    <div id="toast" class="fixed top-1/4 md:top-8 left-1/2 transform -translate-x-1/2 bg-deepNavy text-white px-6 py-3 rounded-xl border-2 border-white shadow-lg font-bold opacity-0 pointer-events-none transition-opacity duration-300 z-[60]">已加入背包！</div>
+
     <script>
-        let appData = JSON.parse(localStorage.getItem('myWritingData')) || { forest: [{title: '視覺', words: ['閃閃發光', '五彩斑斕'], custom: []}], idioms: [] };
+        const STORAGE_KEY = 'writingMagicData_Pro_v1';
 
-        function enterApp() {
-            document.getElementById('cover-page').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
+        // --- 海量預設詞庫 ---
+        const initialData = {
+            forest: [
+                { title: '👁️ 視覺精靈 (看)', color: 'bg-[#FFEAEA]', words: ['閃閃發光', '五彩斑斕', '巨大無比', '若隱若現', '清澈見底', '綠意盎然', '晶瑩剔透', '昏暗微弱', '鮮豔奪目', '潔白如雪', '朦朧不清', '耀眼刺目', '井然有序', '雜亂無章'], custom: [] },
+                { title: '👂 聽覺精靈 (聽)', color: 'bg-[#EAFFFF]', words: ['震耳欲聾', '嘰嘰喳喳', '悄悄話', '轟隆隆', '清脆悅耳', '呼嘯而過', '鴉雀無聲', '震天價響', '淅瀝淅瀝', '呢喃細語', '刺耳尖銳', '悠揚婉轉'], custom: [] },
+                { title: '👃 嗅覺精靈 (聞)', color: 'bg-[#FFF4EA]', words: ['芬芳撲鼻', '淡淡幽香', '霉味', '青草味', '垂涎三尺的香氣', '刺鼻難聞', '沁人心脾', '焦黑味', '馥郁濃香'], custom: [] },
+                { title: '👅 味覺精靈 (嚐)', color: 'bg-[#EAFFEA]', words: ['酸酸甜甜', '滑溜溜', '酥脆可口', '嗆辣無比', '入口即化', '苦澀難咽', '鮮美多汁', '清淡無味', '濃郁醇厚', '回甘'], custom: [] },
+                { title: '✋ 觸覺精靈 (摸)', color: 'bg-[#F4EAFF]', words: ['毛茸茸', '黏答答', '粗糙', '刺骨寒冷', '熱氣騰騰', '冰涼透骨', '柔軟舒適', '堅硬如鐵', '刺痛難忍', '溫潤如玉'], custom: [] }
+            ],
+            idioms: [
+                { category: '😊 開心/興奮', words: ['欣喜若狂', '眉開眼笑', '心花怒放', '手舞足蹈', '喜出望外', '雀躍不已', '笑容滿面', '興高采烈'], custom: [] },
+                { category: '😢 悲傷/失望', words: ['淚如雨下', '愁眉苦臉', '垂頭喪氣', '若有所失', '心如刀割', '嚎啕大哭', '黯然神傷', '失魂落魄'], custom: [] },
+                { category: '😡 生氣/憤怒', words: ['怒火中燒', '火冒三丈', '咬牙切齒', '暴跳如雷', '怒髮衝冠', '氣急敗壞', '怒氣沖沖', '七竅生煙'], custom: [] },
+                { category: '😱 緊張/害怕', words: ['七上八下', '心驚膽戰', '忐忑不安', '屏氣凝神', '提心吊膽', '毛骨悚然', '冷汗直流', '驚慌失措'], custom: [] },
+                { category: '🏃 努力/動作', words: ['汗流浹背', '全力以赴', '馬不停蹄', '手忙腳亂', '聚精會神', '全神貫注', '東張西望', '健步如飛'], custom: [] },
+                { category: '🏞️ 風景/天氣', words: ['風和日麗', '晴空萬里', '傾盆大雨', '鳥語花香', '山明水秀', '烏雲密布', '波瀾壯闊', '繁星點點'], custom: [] }
+            ],
+            garden: [
+                { category: '🌸 春/早晨/希望', words: ['萬物甦醒', '生機勃勃', '微風徐徐', '晨光熹微', '朝氣蓬勃', '綠芽初綻', '露珠晶瑩', '鳥鳴清脆'], custom: [] },
+                { category: '☀️ 夏/熱烈/運動', words: ['烈日當空', '艷陽高照', '熱浪滾滾', '汗如雨下', '蟬聲唧唧', '綠樹成蔭', '驕陽似火', '微波蕩漾'], custom: [] },
+                { category: '🍂 秋/黃昏/回憶', words: ['秋高氣爽', '楓葉似火', '落葉紛飛', '夕陽西下', '晚霞滿天', '微風輕拂', '暮色漸濃', '果實纍纍'], custom: [] },
+                { category: '❄️ 冬/夜晚/安靜', words: ['寒風刺骨', '白雪皚皚', '夜幕低垂', '繁星閃爍', '萬籟俱寂', '月光如水', '銀裝素裹', '冷風呼嘯'], custom: [] }
+            ],
+            // 萬用作文骨架切換
+            sentences: {
+                '記事': [
+                    { type: '🎬 故事開頭 (起)', words: ['記得有一次...', '在我的記憶深處...', '那是一個特別的週末...', '這件事發生在...'], custom: [] },
+                    { type: '⚙️ 事情經過 (承)', words: ['一開始...', '原本以為...', '接著...', '我們迫不及待地...'], custom: [] },
+                    { type: '🔥 精彩轉折 (轉)', words: ['突然間...', '就在這個時候...', '沒想到...', '出乎意料的是...'], custom: [] },
+                    { type: '🏁 結尾收穫 (合)', words: ['經過這次經驗...', '我終於明白...', '這件事讓我學到...', '每當想起這件事...'], custom: [] }
+                ],
+                '寫景': [
+                    { type: '🎬 抵達景點 (起)', words: ['經過漫長的車程...', '一踏進這裡...', '放眼望去...', '映入眼簾的是...'], custom: [] },
+                    { type: '👀 景色描寫 (承)', words: ['遠處的...', '近看...', '抬頭仰望...', '腳下的...'], custom: [] },
+                    { type: '✨ 動態變化 (轉)', words: ['不知不覺中...', '一陣微風吹來...', '隨著時間推移...', '到了傍晚時分...'], custom: [] },
+                    { type: '🏁 依依不捨 (合)', words: ['這次的旅行...', '這裡的美景...', '令人流連忘返...', '真期待下次再來...'], custom: [] }
+                ],
+                '寫人': [
+                    { type: '🎬 人物出場 (起)', words: ['我最熟悉的人是...', '他有一頭...', '只要一提到他...', '在我們班上有一位...'], custom: [] },
+                    { type: '🗣️ 外貌個性 (承)', words: ['他總是...', '笑起來的時候...', '他最喜歡...', '他有一個特點是...'], custom: [] },
+                    { type: '🔥 具體事件 (轉)', words: ['還記得有一次...', '讓我印象最深的是...', '每當遇到困難時...', '有一次他竟然...'], custom: [] },
+                    { type: '🏁 內心感受 (合)', words: ['對我來說，他...', '我很慶幸能有...', '從他身上我學到...', '他真的是一個...'], custom: [] }
+                ]
+            }
+        };
+
+        const emotionData = {
+            '開心': { icon: '😄', color: 'bg-sunnyYellow', desc: { 表情: '嘴角上揚、眼睛彎彎', 動作: '跳起來、拍手歡呼', 心跳: '像放煙火一樣熱鬧', 想法: '覺得世界在對我微笑' } },
+            '難過': { icon: '😭', color: 'bg-skyBlue', desc: { 表情: '眼眶泛紅、眼淚掉下', 動作: '低著頭、肩膀微顫', 心跳: '像被石頭壓住胸口', 想法: '世界彷彿失去色彩' } },
+            '生氣': { icon: '😡', color: 'bg-coralRed', desc: { 表情: '眉毛倒豎、臉像紅番茄', 動作: '用力拍桌、握緊拳頭', 心跳: '心跳像戰鼓一樣激烈', 想法: '心裡像有火快爆炸了' } },
+            '緊張': { icon: '😰', color: 'bg-periwinkle', desc: { 表情: '喉嚨乾乾、眼神閃爍', 動作: '手冒冷汗、腳尖一直抖', 心跳: '快從喉嚨跳出來', 想法: '腦袋空白只求快結束' } }
+        };
+
+        const checklistData = ['開頭有吸引人嗎？', '有交代「人、事、時、地」嗎？', '有寫出具體的事件經過嗎？', '有沒有用上「視覺」魔法？', '有沒有用上「聽覺」魔法？', '有沒有其他的感官描寫？', '裡面有人物的「對話」嗎？', '有寫出心情感受嗎？', '有把心情用「動作表情」演出來嗎？', '有用到至少一個「成語」嗎？', '有用到「比喻」修辭嗎？', '結尾有寫出這件事的收穫嗎？'];
+        const upgradeSentences = ["今天很熱。", "今天烈日當空。", "今天烈日當空，熱得滿頭大汗。", "今天烈日當空，陽光像火球一樣炙烤著大地，熱得汗流浹背。", "今天烈日當空，火辣辣的陽光毫不留情灑向大地，空氣彷彿發燙。走沒幾步就汗如雨下，衣服全濕了。"];
+
+        // --- 全域變數 ---
+        let appData = {};
+        let backpackItems = new Set();
+        let isBackpackOpen = false;
+        let currentEssayType = '記事';
+
+        // --- 初始化 & 存檔系統 ---
+        function init() {
+            loadData();
+            renderNav();
             renderForest();
+            renderEmotions();
+            renderIdioms();
+            renderGarden();
+            renderSentences();
+            renderChecklist();
         }
 
-        function renderForest() {
-            const container = document.getElementById('forest-grid');
-            container.innerHTML = '';
-            appData.forest.forEach((item, idx) => {
-                let wordsHTML = item.words.map(w => `<button class="paper-btn m-1 px-3 py-1 bg-white">${w}</button>`).join('');
-                let customHTML = item.custom.map((w, i) => `
-                    <div class="inline-block m-1 custom-word-btn">
-                        <button class="paper-btn px-3 py-1 bg-sunnyYellow">${w}</button>
-                        <div class="delete-badge" onclick="deleteWord(${idx}, ${i})">X</div>
-                    </div>`).join('');
-                container.innerHTML += `<div class="paper-card p-4"><h3>${item.title}</h3>${wordsHTML}${customHTML}
-                    <button onclick="addWord(${idx})" class="paper-btn bg-gray-200 px-3 py-1">+ 新增詞彙</button></div>`;
+        function loadData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if(saved) { appData = JSON.parse(saved); } 
+            else { appData = JSON.parse(JSON.stringify(initialData)); } // deep copy
+        }
+
+        function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); }
+
+        function resetAllData() {
+            if(confirm("確定要清除所有你新增的詞彙，恢復成原廠設定嗎？(背包內的詞也會清空)")){
+                localStorage.removeItem(STORAGE_KEY);
+                appData = JSON.parse(JSON.stringify(initialData));
+                backpackItems.clear();
+                updateBackpackUI();
+                init();
+                showToast("已恢復原廠設定！");
+            }
+        }
+
+        // --- 介面渲染與互動 ---
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+        function toggleMenu() { sidebar.classList.toggle('-translate-x-full'); mobileOverlay.classList.toggle('hidden'); }
+
+        function renderNav() {
+            const zones = [
+                { id: 1, name: '魔法森林 (五感)', icon: 'fa-tree' }, { id: 2, name: '作文放大鏡', icon: 'fa-search' },
+                { id: 3, name: '電影攝影機', icon: 'fa-video' }, { id: 4, name: '情緒魔法屋', icon: 'fa-face-smile-wink' },
+                { id: 5, name: '成語寶石山', icon: 'fa-gem' }, { id: 6, name: '優美詞句花園', icon: 'fa-seedling' },
+                { id: 7, name: '萬用作文骨架', icon: 'fa-box' }, { id: 8, name: '作文醫院', icon: 'fa-hospital' },
+                { id: 9, name: '寫作升級工廠', icon: 'fa-arrow-up-right-dots' }
+            ];
+            const navMenu = document.getElementById('nav-menu');
+            navMenu.innerHTML = '';
+            zones.forEach(zone => {
+                navMenu.innerHTML += `<button onclick="switchZone(${zone.id})" class="w-full text-left p-3 rounded-xl border-2 border-transparent hover:border-deepNavy hover:bg-skyBlue hover:text-white transition-all font-bold text-base md:text-lg flex items-center gap-3"><i class="fa-solid ${zone.icon} w-5 md:w-6 text-center"></i> ${zone.name}</button>`;
             });
-        }
-
-        function addWord(idx) {
-            const word = prompt("請輸入新詞彙：");
-            if(word) { appData.forest[idx].custom.push(word); save(); renderForest(); }
-        }
-
-        function deleteWord(catIdx, wordIdx) {
-            appData.forest[catIdx].custom.splice(wordIdx, 1);
-            save(); renderForest();
         }
 
         function switchZone(id) {
             document.querySelectorAll('.zone-content').forEach(el => el.classList.remove('active'));
-            document.getElementById('zone-' + id)?.classList.add('active');
+            document.getElementById(`zone-${id}`).classList.add('active');
+            document.getElementById('main-content').scrollTo({ top: 0, behavior: 'smooth' });
+            if (window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) toggleMenu();
         }
 
-        function save() { localStorage.setItem('myWritingData', JSON.stringify(appData)); }
-        function resetAll() { if(confirm("確定重置所有資料嗎？")) { localStorage.clear(); location.reload(); } }
+        // --- 動態按鈕生成 (支援新增/刪除自訂詞) ---
+        function createBtnHTML(word, isCustom, section, catIdx, wordIdx) {
+            let colorClass = isCustom ? "bg-sunnyYellow text-deepNavy" : "bg-white text-deepNavy";
+            let delBtn = isCustom ? `<div class="delete-badge" onclick="deleteCustomWord(event, '${section}', ${catIdx}, ${wordIdx})" title="刪除"><i class="fa-solid fa-times"></i></div>` : '';
+            return `<div class="inline-block m-1 custom-word-btn">
+                <button onclick="addToBackpack('${word}')" class="paper-btn px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-md ${colorClass} hover:bg-coralRed hover:text-white"><i class="fa-solid fa-plus text-xs mr-1 opacity-50"></i>${word}</button>
+                ${delBtn}
+            </div>`;
+        }
+
+        function createAddBtn(section, catIdx) {
+            return `<button onclick="promptAddWord('${section}', ${catIdx})" class="paper-btn px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-md m-1 bg-gray-200 text-gray-600 hover:bg-skyBlue hover:text-white"><i class="fa-solid fa-pen"></i> ＋ 自己加</button>`;
+        }
+
+        function promptAddWord(section, catIdx) {
+            const newWord = prompt("請輸入你要存入的「新詞彙」或「好句子」：");
+            if(newWord && newWord.trim() !== "") {
+                if(!appData[section][catIdx].custom) appData[section][catIdx].custom = [];
+                appData[section][catIdx].custom.push(newWord.trim());
+                saveData();
+                if(section === 'forest') renderForest();
+                if(section === 'idioms') renderIdioms();
+                if(section === 'garden') renderGarden();
+                if(section === 'sentences' && section !== 'sentences') renderSentences(); // handled differently below
+            }
+        }
+
+        function promptAddSentence(typeKey, catIdx) {
+            const newWord = prompt("請輸入你要存入的專屬「句型」：");
+            if(newWord && newWord.trim() !== "") {
+                if(!appData.sentences[typeKey][catIdx].custom) appData.sentences[typeKey][catIdx].custom = [];
+                appData.sentences[typeKey][catIdx].custom.push(newWord.trim());
+                saveData();
+                renderSentences();
+            }
+        }
+
+        function deleteCustomWord(e, section, catIdx, wordIdx, typeKey = null) {
+            e.stopPropagation(); // 防止觸發加入背包
+            if(confirm("確定要刪除這個自訂詞彙嗎？")){
+                if(typeKey) { appData.sentences[typeKey][catIdx].custom.splice(wordIdx, 1); }
+                else { appData[section][catIdx].custom.splice(wordIdx, 1); }
+                saveData();
+                if(section === 'forest') renderForest();
+                if(section === 'idioms') renderIdioms();
+                if(section === 'garden') renderGarden();
+                if(section === 'sentences') renderSentences();
+            }
+        }
+
+        function renderForest() {
+            const c = document.getElementById('forest-grid'); c.innerHTML = '';
+            appData.forest.forEach((item, idx) => {
+                let html = item.words.map(w => createBtnHTML(w, false)).join('');
+                if(item.custom) html += item.custom.map((w, i) => createBtnHTML(w, true, 'forest', idx, i)).join('');
+                html += createAddBtn('forest', idx);
+                c.innerHTML += `<div class="paper-card p-4 md:p-6 ${item.color}"><h3 class="font-title text-xl md:text-2xl mb-3 border-b-2 border-deepNavy pb-2 text-center">${item.title}</h3><div class="flex flex-wrap justify-center">${html}</div></div>`;
+            });
+        }
+
+        function renderIdioms() {
+            const c = document.getElementById('idiom-container'); c.innerHTML = '';
+            appData.idioms.forEach((item, idx) => {
+                let html = item.words.map(w => createBtnHTML(w, false)).join('');
+                if(item.custom) html += item.custom.map((w, i) => createBtnHTML(w, true, 'idioms', idx, i)).join('');
+                html += createAddBtn('idioms', idx);
+                c.innerHTML += `<div class="paper-card p-4 md:p-6 bg-white flex flex-col md:flex-row items-center gap-3 md:gap-6"><div class="w-full md:w-1/4 font-title text-xl md:text-2xl text-center md:text-left text-deepNavy">${item.category}</div><div class="flex-1 flex flex-wrap gap-1 md:gap-2 justify-center md:justify-start border-t-2 md:border-t-0 md:border-l-4 border-dashed border-gray-300 pt-3 md:pt-0 md:pl-6">${html}</div></div>`;
+            });
+        }
+
+        function renderGarden() {
+            const c = document.getElementById('garden-container'); c.innerHTML = '';
+            appData.garden.forEach((item, idx) => {
+                let html = item.words.map(w => createBtnHTML(w, false)).join('');
+                if(item.custom) html += item.custom.map((w, i) => createBtnHTML(w, true, 'garden', idx, i)).join('');
+                html += createAddBtn('garden', idx);
+                c.innerHTML += `<div class="paper-card p-4 md:p-6 bg-[#EAFFEA]"><h3 class="font-title text-xl md:text-2xl mb-3 border-b-2 border-deepNavy pb-2 text-center md:text-left">${item.category}</h3><div class="flex flex-wrap justify-center md:justify-start">${html}</div></div>`;
+            });
+        }
+
+        function switchEssayType(type) {
+            currentEssayType = type;
+            document.querySelectorAll('.essay-tab').forEach(btn => {
+                if(btn.dataset.type === type) { btn.classList.replace('bg-white','bg-sunnyYellow'); btn.classList.remove('opacity-70'); }
+                else { btn.classList.replace('bg-sunnyYellow','bg-white'); btn.classList.add('opacity-70'); }
+            });
+            renderSentences();
+        }
+
+        function renderSentences() {
+            const c = document.getElementById('sentence-container'); c.innerHTML = '';
+            const colors = ['bg-[#FFEAEA]', 'bg-[#EAFFFF]', 'bg-[#FFF4EA]', 'bg-[#F4EAFF]'];
+            const dataList = appData.sentences[currentEssayType];
+            dataList.forEach((item, idx) => {
+                let html = item.words.map(w => createBtnHTML(w, false)).join('');
+                if(item.custom) {
+                    html += item.custom.map((w, i) => {
+                        let delBtn = `<div class="delete-badge" onclick="deleteCustomWord(event, 'sentences', ${idx}, ${i}, '${currentEssayType}')" title="刪除"><i class="fa-solid fa-times"></i></div>`;
+                        return `<div class="inline-block m-1 custom-word-btn"><button onclick="addToBackpack('${w}')" class="paper-btn px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-md bg-sunnyYellow hover:bg-coralRed hover:text-white"><i class="fa-solid fa-plus text-xs mr-1 opacity-50"></i>${w}</button>${delBtn}</div>`;
+                    }).join('');
+                }
+                html += `<button onclick="promptAddSentence('${currentEssayType}', ${idx})" class="paper-btn px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-md m-1 bg-gray-200 text-gray-600 hover:bg-skyBlue hover:text-white"><i class="fa-solid fa-pen"></i> ＋ 加句型</button>`;
+                
+                c.innerHTML += `<div class="paper-card p-4 md:p-5 ${colors[idx]}"><h3 class="font-title text-lg md:text-xl mb-2 text-center bg-white border-2 border-deepNavy rounded-full py-1">${item.type}</h3><div class="flex flex-col gap-1">${html}</div></div>`;
+            });
+        }
+
+        function setZoom(level) {
+            const box = document.getElementById('zoom-result'); box.classList.remove('animate-pop'); void box.offsetWidth; box.classList.add('animate-pop');
+            if(level===1) box.innerHTML = '公園裡開滿了<span class="text-coralRed">五顏六色的</span>花。';
+            if(level===2) box.innerHTML = '公園裡開滿了五顏六色的花，它們<span class="text-skyBlue">在微風中輕輕點頭</span>。';
+            if(level===3) box.innerHTML = '公園裡開滿了五顏六色的花，<span class="text-sunnyYellow">花瓣上的露珠閃閃發光</span>，它們在微風中輕輕搖曳，<span class="text-grassGreen">像是一群快樂跳舞的小精靈</span>。';
+        }
+
+        function renderEmotions() {
+            const tabs = document.getElementById('emotion-tabs');
+            Object.keys(emotionData).forEach(emo => {
+                tabs.innerHTML += `<button onclick="showEmotion('${emo}')" class="paper-btn px-4 md:px-6 py-2 md:py-3 text-base md:text-xl ${emotionData[emo].color} hover:-translate-y-1">${emotionData[emo].icon} 我很${emo}</button>`;
+            });
+        }
+
+        function showEmotion(emo) {
+            document.getElementById('emotion-display').classList.remove('hidden');
+            document.getElementById('emo-title').innerHTML = `${emotionData[emo].icon} 把「我很${emo}」變成...`;
+            const content = document.getElementById('emo-content'); content.innerHTML = '';
+            Object.entries(emotionData[emo].desc).forEach(([key, val]) => {
+                content.innerHTML += `<div class="border-2 md:border-4 border-deepNavy rounded-xl p-3 md:p-4 bg-creamWhite text-center cursor-pointer hover:bg-sunnyYellow transition-colors" onclick="addToBackpack('${val}')"><div class="text-xs md:text-sm font-bold text-gray-500 mb-1">${key}</div><div class="text-sm md:text-lg font-bold">${val} <i class="fa-solid fa-plus text-xs ml-1 opacity-50"></i></div></div>`;
+            });
+        }
+
+        function renderChecklist() {
+            const container = document.getElementById('checklist-container');
+            checklistData.forEach(item => {
+                container.innerHTML += `<label class="flex items-center gap-3 p-2 md:p-3 bg-creamWhite border-2 border-deepNavy rounded-xl cursor-pointer hover:bg-skyBlue hover:text-white transition-colors"><input type="checkbox" class="w-5 h-5 md:w-6 md:h-6 border-2 border-deepNavy rounded text-coralRed focus:ring-0 cursor-pointer hospital-cb" onchange="updateHealthScore()"><span class="text-sm md:text-lg font-bold select-none leading-tight">${item}</span></label>`;
+            });
+        }
+
+        function updateHealthScore() {
+            const cbs = document.querySelectorAll('.hospital-cb');
+            const count = Array.from(cbs).filter(cb => cb.checked).length;
+            document.getElementById('health-score').innerText = `${count}/${cbs.length}`;
+            const diag = document.getElementById('health-diagnosis');
+            if (count <= 4) { diag.innerHTML = "🚨 骨瘦如柴！<br><span class='text-xs md:text-sm font-normal'>文章太短了，去魔法森林補補身子！</span>"; diag.className = "text-sm md:text-lg font-bold text-coralRed bg-white p-2 md:p-3 border-2 border-coralRed rounded-xl"; }
+            else if (count <= 8) { diag.innerHTML = "💪 漸入佳境！<br><span class='text-xs md:text-sm font-normal'>骨架出來了，去情緒魔法屋加點感情！</span>"; diag.className = "text-sm md:text-lg font-bold text-sunnyYellow bg-white p-2 md:p-3 border-2 border-sunnyYellow rounded-xl"; }
+            else if (count < 12) { diag.innerHTML = "🌟 非常健康！<br><span class='text-xs md:text-sm font-normal'>差一點點，用成語寶石把文章變漂亮吧！</span>"; diag.className = "text-sm md:text-lg font-bold text-grassGreen bg-white p-2 md:p-3 border-2 border-grassGreen rounded-xl"; }
+            else { diag.innerHTML = "👑 完美出院！<br><span class='text-xs md:text-sm font-normal'>這是一篇超棒的五星級大作！</span>"; diag.className = "text-sm md:text-lg font-bold text-white bg-coralRed p-2 md:p-3 border-2 border-deepNavy rounded-xl animate-pop"; }
+        }
+
+        function setUpgrade(stars) {
+            const box = document.getElementById('upgrade-result'); const icons = document.getElementById('star-rating').children;
+            for(let i=0; i<5; i++) {
+                if(i<stars) { icons[i].classList.replace('text-gray-300','text-sunnyYellow'); }
+                else { icons[i].classList.replace('text-sunnyYellow','text-gray-300'); }
+            }
+            box.classList.remove('animate-pop'); void box.offsetWidth; box.classList.add('animate-pop');
+            let res = upgradeSentences[stars-1];
+            if(stars===2) res = res.replace('烈日當空', '<span class="text-coralRed">烈日當空</span>');
+            if(stars>=3) res = res.replace('熱得滿頭大汗', '<span class="text-skyBlue">熱得滿頭大汗</span>');
+            if(stars>=4) res = res.replace('陽光像火球一樣炙烤著大地', '<span class="text-sunnyYellow">陽光像火球一樣炙烤著大地</span>');
+            if(stars===5) res = res.replace('空氣彷彿發燙', '<span class="text-grassGreen">空氣彷彿發燙</span>').replace('衣服全濕了', '<span class="text-periwinkle">衣服全濕了</span>');
+            box.innerHTML = res;
+        }
+
+        // --- 背包系統 ---
+        function toggleBackpack() {
+            isBackpackOpen = !isBackpackOpen;
+            const p = document.getElementById('backpack-panel');
+            isBackpackOpen ? p.classList.remove('translate-x-full') : p.classList.add('translate-x-full');
+        }
+
+        function addToBackpack(word) {
+            if (!backpackItems.has(word)) {
+                backpackItems.add(word); updateBackpackUI(); showToast(`「${word}」已加入！`);
+                const bc = document.getElementById('backpack-count'); bc.classList.remove('animate-pop'); void bc.offsetWidth; bc.classList.add('animate-pop');
+            }
+        }
+
+        function updateBackpackUI() {
+            const c = document.getElementById('backpack-items');
+            document.getElementById('backpack-count').innerText = backpackItems.size;
+            if (backpackItems.size === 0) { c.innerHTML = `<div class="text-center text-gray-400 font-bold mt-20"><i class="fa-solid fa-box-open text-5xl md:text-6xl mb-4"></i><br>背包空空的！</div>`; return; }
+            c.innerHTML = '';
+            backpackItems.forEach(w => {
+                c.innerHTML += `<div class="bg-creamWhite border-2 border-deepNavy rounded-lg p-2 md:p-3 mb-2 flex justify-between items-center font-bold text-sm md:text-base"><span>${w}</span><button onclick="removeFromBackpack('${w}')" class="text-coralRed text-lg"><i class="fa-solid fa-trash-can"></i></button></div>`;
+            });
+        }
+        function removeFromBackpack(w) { backpackItems.delete(w); updateBackpackUI(); }
+        function clearBackpack() { if(confirm('清空背包嗎？')) { backpackItems.clear(); updateBackpackUI(); } }
+
+        function copyBackpack() {
+            if (backpackItems.size === 0) { showToast("背包是空的！"); return; }
+            const text = Array.from(backpackItems).join('、');
+            const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); showToast("✨ 複製成功！"); } catch (e) { showToast("請手動複製。"); }
+            document.body.removeChild(ta);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast'); t.innerText = msg; t.classList.remove('opacity-0');
+            setTimeout(() => t.classList.add('opacity-0'), 2000);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
+
+
+-- 主程式區域維持原樣 (您原本的代碼貼在此處) -->
+    <div id="main-app" class="hidden h-screen flex flex-col">
+        <!-- 內容保持您原先的代碼結構 -->
+    </div>
+
+    <script>
+        function enterApp() {
+            document.getElementById('cover-page').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+        }
     </script>
 </body>
 </html>
